@@ -2,6 +2,11 @@ import logo from './logo.svg';
 import './App.css';
 
 function App() {
+
+    function donateNow() {
+        alert("Thank you for your willingness to donate blood. Your contribution can save lives!");
+    }
+    
   return (
     <div>
     <header>
@@ -20,7 +25,7 @@ function App() {
     <section id="hero">
         <h2>Welcome to our Blood Donation </h2>
         <p>Help save lives by donating blood. Your contribution can make a difference.</p>
-        <button className="btn" onclick="donateNow()">Donate Now</button>
+        <button className="btn" onClick={donateNow}>Donate Now</button>
     </section>
 
     <section id="about">
@@ -47,10 +52,13 @@ function App() {
         <p>&copy; 2023 Blood Donation </p>
     </footer>
 
+   
+
 
     
 </div>
   );
+ 
 }
 
 export default App;
