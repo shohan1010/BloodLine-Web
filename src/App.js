@@ -32,6 +32,7 @@ function App() {
         <h2>About Us</h2>
         <p>We are a non-profit organization dedicated to saving lives by providing a safe and efficient blood donation service.</p>
     </section>
+    
 
     <section id="donors">
         <h2>Our Donors</h2>
