@@ -10,6 +10,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { doc, getFirestore, setDoc, updateDoc } from "firebase/firestore";
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from './firebaseConfig';
+import Nav_Bar from './Nav_Bar';
+import { Typography } from '@mui/material';
 
 const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const bangladeshDistricts = [
@@ -25,6 +27,7 @@ const bangladeshDistricts = [
   "Thakurgaon", "Other District"
 ];
 
+
 // Function to update data in Firebase Firestore
 const updateFirestoreData = async (formData) => {
   try {
@@ -32,6 +35,8 @@ const updateFirestoreData = async (formData) => {
     const db = getFirestore(app);
     // Replace "yourCollection" and "yourDocument" with your Firestore collection and document names
     const docRef = doc(db, 'Blood Request', formData.email);
+
+
 
     // Set the document with the user's data, creating it if it doesn't exist
     await setDoc(docRef, {
@@ -44,13 +49,20 @@ const updateFirestoreData = async (formData) => {
     }, { merge: true });
 
     console.log('Firestore data updated successfully');
-  } catch (error) {
-    console.error('Error updating Firestore data:', error);
+    window.location.href = "/";
+  } catch (e) {
+    console.error('Error updating Firestore data:', e);
+    
+    // setError("Email address is already in use.");
+
   }
 };
 
 
 const Blood_Request = () => {
+  const [error, setError] = useState(null);
+
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -95,7 +107,11 @@ const Blood_Request = () => {
 
   return (
     <div>
-      <Container>
+
+
+      <Nav_Bar></Nav_Bar>
+      <Container maxWidth="xs" style={{ marginRight: '10%' }}>
+
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2} justifyContent="center" marginTop={20}>
             <Grid item xs={10}>
@@ -179,6 +195,9 @@ const Blood_Request = () => {
               >
                 Request
               </Button>
+
+              
+         
             </Grid>
           </Grid>
         </form>

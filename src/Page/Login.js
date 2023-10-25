@@ -10,6 +10,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
+  const [error, setError] = useState(null); // Add error state
   console.log("working...");
 
   const app = initializeApp(firebaseConfig);
@@ -19,6 +20,7 @@ const Login = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
+        setError(null); // Clear any previous errors on successful login
       } else {
         setUser(null);
       }
@@ -33,40 +35,39 @@ const Login = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
         const user = result.user;
-        // Handle the successful sign-in
+        setUser(user); // Update the user state on successful login
+        setError(null); // Clear any previous errors
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // Handle the error
+        setError(error.message); // Set the error message on failure
       });
   };
 
   const handleEmailSignIn = () => {
-    if (email && password) {
-      signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          console.log(user.email);
-          // Handle the successful sign-in
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          // Handle the error
-        });
-    } else {
-      console.error("Email and password are required.");
+    if (!email || !password) {
+      setError("Required fields are empty");
+      return;
     }
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        setUser(user); // Update the user state on successful login
+        setError(null); // Clear any previous errors
+        console.log(user.email);
+      })
+      .catch((error) => {
+        setError(error.message); // Set the error message on failure
+      });
   };
 
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
-        // Sign-out successful
+        setUser(null); // Clear the user state on sign-out
       })
       .catch((error) => {
-        console.error(error);
+        setError(error.message); // Set the error message on failure
       });
   };
 
@@ -91,6 +92,7 @@ const Login = () => {
           ) : (
             <div>
               <Typography variant="h4" align="center">Login</Typography>
+             
               <TextField
                 fullWidth
                 label="Email or Phone Number"
@@ -131,11 +133,10 @@ const Login = () => {
               <IconButton onClick={handleGoogleSignIn} style={{ marginTop: '15px', marginRight: '10px' }}>
                 <GoogleIcon />
               </IconButton>
+              {error && <Typography variant="body1" color="error" marginLeft={10}>Username or Passwrod is in incorect</Typography>}
               <div className="flex justify-end ">
                 <p>
-                  Don't have an account?
-                  <a href="/register" className="text-black hover:text-blue-500">
-                    Register
+                  Don't have an account?<a href="/register" className="text-black hover:text-blue-500">  Register
                   </a>
                 </p>
               </div>

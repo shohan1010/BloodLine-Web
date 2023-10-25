@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import Autocomplete from '@mui/material/Autocomplete'; // Add this import
+import Autocomplete from '@mui/material/Autocomplete';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -12,10 +12,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Nav_Bar from './Nav_Bar';
 import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from 'firebase/auth';
+import { doc, getFirestore, setDoc } from 'firebase/firestore';
 import firebaseConfig from './firebaseConfig';
-import { doc, getFirestore, setDoc, updateDoc } from "firebase/firestore";
-import { FormControl } from '@mui/material';
+import { FormControl, Typography } from '@mui/material';
 
 const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
@@ -46,63 +46,57 @@ const Register = () => {
     location: '',
     dateOfBirth: null,
     gender: 'Male',
-    password: '', // Add a password field to the form
-    district: '', // Add a district field
+    password: '',
+    district: '',
   });
 
-  const [formDataArray, setFormDataArray] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); // Initialize the error state
 
-  // Create account with email and password
-  const handleCreateEmail = () => {
+  const handleCreateEmail = async () => {
+    setError(null); // Clear any previous errors
     const { email, password, name, phone, district, dateOfBirth, gender, bloodGroup } = formData;
 
-    console.log("create account");
-    
-
-    // Check if any of the required fields are empty
     if (!email || !password || !name || !phone || !district || !dateOfBirth || !gender || !bloodGroup) {
-      console.error("Required fields are empty");
-      return; // Stop execution if any required fields are empty
+      setError("Required fields are empty");
+      return;
     }
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
+    try {
+      // Check if the email is already registered
+      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
 
-        if (user) {
-          const setdata = doc(db, "cities", email); // Use user's UID as the document ID
-          const newData = {
-            name,
-            email,
-            phone,
-            bloodGroup, // Correct the property name
-            location: district,
-            dateOfBirth,
-            gender,
-          };
+      if (signInMethods && signInMethods.length > 0) {
+        setError("Email address is already in use");
+        return;
+      }
 
-          setDoc(setdata, newData)
-            .then(() => {
-              console.log("Account created successfully and data saved to Firestore");
-              
-            })
-            .catch((error) => {
-              console.error("Error saving data to Firestore:", error);
-            });
-        } else {
-          console.error("Error creating Account");
-        }
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        setError(errorMessage);
-      });
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      if (user) {
+        const setdata = doc(db, "cities", email);
+        const newData = {
+          name,
+          email,
+          phone,
+          bloodGroup,
+          location: district,
+          dateOfBirth,
+          gender,
+        };
+
+        await setDoc(setdata, newData);
+        console.log("Account created successfully and data saved to Firestore");
+        window.location.href = "/login";  // one page ot another page
+      } else {
+        setError("Error creating Account");
+      }
+    } catch (err) {
+      const errorMessage = err.message;
+      setError(errorMessage);
+    }
   };
-
-
 
   const handleChange = (event, newValue, field) => {
     setFormData({
@@ -128,16 +122,20 @@ const Register = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setFormDataArray([...formDataArray, formData]);
-    // Clear the form or perform any additional actions after submission
+    // You can add additional form submission logic here
   };
 
   return (
     <div>
       <Nav_Bar />
-      <Container>
+      <Container maxWidth="xs" style={{ marginRight: '10%' }}>
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={2} justifyContent="center" marginTop={20}>
+          <Grid container spacing={2} justifyContent="center" marginTop={15}>
+            {error && (
+              <Typography variant="body1" color="error" marginLeft={10}>
+                {error}
+              </Typography>
+            )}
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -175,17 +173,8 @@ const Register = () => {
                 required
               />
             </Grid>
-            {/* <Grid item xs={12}>
-              <Autocomplete
-                options={bloodGroups}
-                renderInput={(params) => <TextField {...params} fullWidth label="Blood Group" />}
-                value={formData.bloodGroup}
-                onChange={(_, newValue) => handleChange(_, newValue, 'bloodGroup')}
-                required
-              />
-            </Grid> */}
             <Grid item xs={12}>
-            <FormControl fullWidth required>
+              <FormControl fullWidth required>
                 <Autocomplete
                   options={bloodGroups}
                   renderInput={(params) => <TextField {...params} label="Blood Group" />}
@@ -194,7 +183,6 @@ const Register = () => {
                 />
               </FormControl>
             </Grid>
-
             <Grid item xs={12}>
               <Autocomplete
                 options={bangladeshDistricts}
@@ -219,35 +207,21 @@ const Register = () => {
               <RadioGroup value={formData.gender} onChange={handleGenderChange} row>
                 <FormControlLabel value="Male" control={<Radio />} label="Male" />
                 <FormControlLabel value="Female" control={<Radio />} label="Female" />
-
-
               </RadioGroup>
             </Grid>
-
             <Grid item xs={12}>
-              <Button type="submit" variant="contained" color="primary" onClick={handleCreateEmail}>
+              <Button type="button" variant="contained" color="primary" onClick={handleCreateEmail}>
                 Register
               </Button>
-
             </Grid>
           </Grid>
-          
         </form>
-
-
         <div className="flex justify-end pl-4">
           <p>
             Already have an account?
             <a href="/login" className="text-black hover:text-blue-500">  Login</a>
           </p>
         </div>
-
-
-
-
-
-
-
       </Container>
     </div>
   );
