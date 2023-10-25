@@ -10,6 +10,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
+  console.log("working...");
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth();
