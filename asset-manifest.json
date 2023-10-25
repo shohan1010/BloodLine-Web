@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/BloodLine-Web/static/css/main.d0d77ee1.css",
-    "main.js": "/BloodLine-Web/static/js/main.a6afce07.js",
-    "static/js/787.e4f3839d.chunk.js": "/BloodLine-Web/static/js/787.e4f3839d.chunk.js",
-    "static/media/logo.svg": "/BloodLine-Web/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
-    "index.html": "/BloodLine-Web/index.html",
-    "main.d0d77ee1.css.map": "/BloodLine-Web/static/css/main.d0d77ee1.css.map",
-    "main.a6afce07.js.map": "/BloodLine-Web/static/js/main.a6afce07.js.map",
-    "787.e4f3839d.chunk.js.map": "/BloodLine-Web/static/js/787.e4f3839d.chunk.js.map"
+    "main.css": "/static/css/main.af61b5ce.css",
+    "main.js": "/static/js/main.b966f009.js",
+    "static/js/787.e4f3839d.chunk.js": "/static/js/787.e4f3839d.chunk.js",
+    "static/media/logo.svg": "/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/index.html",
+    "main.af61b5ce.css.map": "/static/css/main.af61b5ce.css.map",
+    "main.b966f009.js.map": "/static/js/main.b966f009.js.map",
+    "787.e4f3839d.chunk.js.map": "/static/js/787.e4f3839d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.d0d77ee1.css",
-    "static/js/main.a6afce07.js"
+    "static/css/main.af61b5ce.css",
+    "static/js/main.b966f009.js"
   ]
 }
