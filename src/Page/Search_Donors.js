@@ -1,9 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Autocomplete, TextField, Button } from '@mui/material';
-import Nav_Bar from './Nav_Bar';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+import {
+  Card,
+  CardContent,
+  CardActions,
+  Typography,
+  Grow,
+  Grid,
+} from '@mui/material';
+
+// Firebase Configuration
 import firebaseConfig from './firebaseConfig';
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const bangladeshDistricts = [
   "Bagerhat", "Bandarban", "Barguna", "Barishal", "Bhola", "Bogura", "Brahmanbaria",
@@ -18,42 +31,57 @@ const bangladeshDistricts = [
   "Thakurgaon", "Other District"
 ];
 
-const Search_Donors = ({ filters, onFilterChange, onSearch }) => {
+
+const Search_Donors = () => {
+  const [items, setItems] = useState([]);
+  const [filters, setFilters] = useState({
+    bloodGroup: '',
+    district: [],
+    donorType: '',
+  });
+
+  const [isHovered, setIsHovered] = useState(null);
+
   const handleInputChange = (name, value) => {
-    console.log(`Setting ${name} to:`, value);
-    // onFilterChange(name, value);
+    setFilters({ ...filters, [name]: value });
   };
 
-  const handleSearchClick = async () => {
+  const searchUsers = async () => {
     try {
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
+      let q = query(collection(db, 'cities'));
 
-      const usersRef = collection(db, 'users');
-      const querySnapshot = await getDocs(usersRef);
+      if (filters.bloodGroup) {
+        q = query(q, where('bloodGroup', '==', filters.bloodGroup));
+      }
+      if (filters.district.length > 0) {
+        q = query(q, where('location', 'in', filters.district));
+      }
+      if (filters.donorType && filters.donorType !== 'All') {
+        q = query(q, where('donorType', '==', filters.donorType));
+      }
 
+      const querySnapshot = await getDocs(q);
+
+      const users = [];
       querySnapshot.forEach((doc) => {
-        const userData = doc.data();
-        const firstName = userData.firstName;
-        const secondName = userData.secondName;
-        const lastName = userData.lastName;
-
-        console.log(`First Name: ${firstName}, Second Name: ${secondName}, Last Name: ${lastName}`);
-        console.log(doc.id, ' => ', userData);
+        users.push(doc.data());
       });
 
-      console.log('Search worked!');
-      // onSearch();
+      setItems(users);
     } catch (error) {
-      console.error('Error searching for donors:', error);
+      console.error('Error searching for users:', error);
     }
   };
 
+  useEffect(() => {
+    // Fetch initial data when the component mounts
+    searchUsers();
+  }, []);
+
   return (
     <div>
-      <Nav_Bar />
       <div className="search-donors-container">
-      <Autocomplete
+        <Autocomplete
           className="search-donors-input"
           name="bloodGroup"
           options={['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']}
@@ -78,19 +106,17 @@ const Search_Donors = ({ filters, onFilterChange, onSearch }) => {
             />
           )}
           onChange={(event, value) => handleInputChange('district', value)}
-          multiple={true}  // Allow multiple selections
+          multiple={true}
           filterOptions={(options, state) => {
-            // Filter options based on the user's input
             return options.filter((option) =>
               option.toLowerCase().includes(state.inputValue.toLowerCase())
             );
           }}
         />
-
         <Autocomplete
           className="search-donors-input"
           name="donorType"
-          options={["All", "Eligible"]}
+          options={['All', 'Eligible']}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -104,11 +130,54 @@ const Search_Donors = ({ filters, onFilterChange, onSearch }) => {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleSearchClick}
+          onClick={searchUsers}
           style={{ height: '50px', width: '80px' }}
         >
           Search
         </Button>
+      </div>
+
+      <div>
+        
+        <Grid container spacing={2}>
+          {items.map((item, index) => (
+            <Grow in={true} key={index} timeout={500}>
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <Card
+                  onMouseEnter={() => setIsHovered(index)}
+                  onMouseLeave={() => setIsHovered(null)}
+                  variant="outlined"
+                  style={{
+                    backgroundColor: isHovered === index ? '#f0f0f0' : 'white',
+                    transition: 'background-color 0.3s',
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                  }}
+                >
+                  <CardContent
+                    style={{
+                      transition: 'transform 0.3s',
+                      transform: isHovered === index ? 'scale(1.05)' : 'scale(1)',
+                    }}
+                  >
+                    <Typography variant="h5" component="div">
+                      {item.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Blood Group: {item.bloodGroup}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Gender: {item.gender}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Location: {item.location}
+                    </Typography>
+                    {/* Add more information here */}
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grow>
+          ))}
+        </Grid>
       </div>
     </div>
   );

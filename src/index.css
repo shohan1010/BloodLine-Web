@@ -88,7 +88,7 @@ footer {
 .search-donors-container {
   position: relative;
   width: 100%; /* 100% width of its parent container */
-  padding-bottom: 66.67%; /* 3/2 aspect ratio */
+  padding-bottom: 5%; /* 3/2 aspect ratio */
 
   /* Your other styles */
   max-width: 900px;
@@ -100,10 +100,7 @@ footer {
   align-items: center;
   justify-content: center; /* Center items horizontally */
 
-  /* Responsive styling */
-  @media (max-width: 768px) {
-    flex-direction: column; /* Stack items vertically on small screens */
-  }
+ 
 }
 
 
