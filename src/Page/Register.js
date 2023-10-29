@@ -16,8 +16,10 @@ import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } f
 import { doc, getFirestore, setDoc } from 'firebase/firestore';
 import firebaseConfig from './firebaseConfig';
 import { FormControl, Typography } from '@mui/material';
+import { ClipLoader } from 'react-spinners';
+import { red } from '@mui/material/colors';
 
-const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+const BloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
 const bangladeshDistricts = [
   "Bagerhat", "Bandarban", "Barguna", "Barishal", "Bhola", "Bogura", "Brahmanbaria",
@@ -39,62 +41,71 @@ const Register = () => {
   const db = getFirestore(app);
 
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    bloodGroup: '',
-    location: '',
-    dateOfBirth: null,
-    gender: 'Male',
+    Name: '',
+    Email: '',
+    Phone: '',
+    BloodGroup: '',
+    Location: '',
+    DateOfBirth: null,
+    Gender: 'Male',
     password: '',
     district: '',
   });
 
   const [selectedDate, setSelectedDate] = useState(null);
-  const [error, setError] = useState(null); // Initialize the error state
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCreateEmail = async () => {
-    setError(null); // Clear any previous errors
-    const { email, password, name, phone, district, dateOfBirth, gender, bloodGroup } = formData;
+    setError(null);
+    setIsLoading(true);
 
-    if (!email || !password || !name || !phone || !district || !dateOfBirth || !gender || !bloodGroup) {
+    const { Email, password, Name, Phone, district, DateOfBirth, Gender, BloodGroup } = formData;
+
+    if (!Email || !password || !Name || !Phone || !district || !DateOfBirth || !Gender || !BloodGroup) {
       setError("Required fields are empty");
+      setIsLoading(false);
       return;
     }
 
     try {
-      // Check if the email is already registered
-      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+      const signInMethods = await fetchSignInMethodsForEmail(auth, Email);
 
+      // if the location of the user already exists
       if (signInMethods && signInMethods.length > 0) {
         setError("Email address is already in use");
+        setIsLoading(false);
         return;
       }
 
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, Email, password);
       const user = userCredential.user;
+      const AccountCreate = new Date();
 
       if (user) {
-        const setdata = doc(db, "cities", email);
+        const setdata = doc(db, "cities", Email);
         const newData = {
-          name,
-          email,
-          phone,
-          bloodGroup,
-          location: district,
-          dateOfBirth,
-          gender,
+          Name,
+          Email,
+          Phone,
+          BloodGroup,
+          Location: district,
+          DateOfBirth,
+          Gender,
+          AccountCreate
         };
 
         await setDoc(setdata, newData);
-        console.log("Account created successfully and data saved to Firestore");
-        window.location.href = "/login";  // one page ot another page
+        console.log("Account created successfully, and data saved to Firestore");
+        window.location.href = "/login";
       } else {
         setError("Error creating Account");
+        setIsLoading(false);
       }
     } catch (err) {
       const errorMessage = err.message;
       setError(errorMessage);
+      setIsLoading(false);
     }
   };
 
@@ -108,7 +119,7 @@ const Register = () => {
   const handleGenderChange = (event) => {
     setFormData({
       ...formData,
-      gender: event.target.value,
+      Gender: event.target.value,
     });
   };
 
@@ -116,7 +127,7 @@ const Register = () => {
     setSelectedDate(date);
     setFormData({
       ...formData,
-      dateOfBirth: date,
+      DateOfBirth: date,
     });
   };
 
@@ -128,7 +139,21 @@ const Register = () => {
   return (
     <div>
       <Nav_Bar />
-      <Container maxWidth="xs" style={{ marginRight: '10%' }}>
+
+      {/* Preloading code */}
+      {isLoading && (
+        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+          <ClipLoader
+            color={'#d73636'}
+            loading={true}
+            size={150}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        </div>
+      )}
+      
+      <Container maxWidth="xs" style={{ marginRight: '10%',display: isLoading ? 'none' : 'block' }}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2} justifyContent="center" marginTop={15}>
             {error && (
@@ -136,84 +161,88 @@ const Register = () => {
                 {error}
               </Typography>
             )}
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Name"
-                value={formData.name}
-                onChange={(event) => handleChange(event, event.target.value, 'name')}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Email"
-                value={formData.email}
-                onChange={(event) => handleChange(event, event.target.value, 'email')}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Password"
-                type="password"
-                value={formData.password}
-                onChange={(event) => handleChange(event, event.target.value, 'password')}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Phone"
-                value={formData.phone}
-                onChange={(event) => handleChange(event, event.target.value, 'phone')}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth required>
-                <Autocomplete
-                  options={bloodGroups}
-                  renderInput={(params) => <TextField {...params} label="Blood Group" />}
-                  value={formData.bloodGroup}
-                  onChange={(_, newValue) => handleChange(_, newValue, 'bloodGroup')}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <Autocomplete
-                options={bangladeshDistricts}
-                renderInput={(params) => <TextField {...params} fullWidth label="Location" />}
-                value={formData.district}
-                onChange={(_, newValue) => handleChange(_, newValue, 'district')}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  value={selectedDate}
-                  onChange={handleDateChange}
-                  renderInput={(params) => <TextField {...params} fullWidth label="Date of Birth" />}
-                  maxDate={new Date()} // Max date is today
-                  required
-                />
-              </LocalizationProvider>
-            </Grid>
-            <Grid item xs={12}>
-              <RadioGroup value={formData.gender} onChange={handleGenderChange} row>
-                <FormControlLabel value="Male" control={<Radio />} label="Male" />
-                <FormControlLabel value="Female" control={<Radio />} label="Female" />
-              </RadioGroup>
-            </Grid>
-            <Grid item xs={12}>
-              <Button type="button" variant="contained" color="primary" onClick={handleCreateEmail}>
-                Register
-              </Button>
-            </Grid>
+            {!isLoading && (
+              <>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Name"
+                    value={formData.Name}
+                    onChange={(event) => handleChange(event, event.target.value, 'Name')}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Email"
+                    value={formData.Email}
+                    onChange={(event) => handleChange(event, event.target.value, 'Email')}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Password"
+                    type="password"
+                    value={formData.password}
+                    onChange={(event) => handleChange(event, event.target.value, 'password')}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Phone"
+                    value={formData.Phone}
+                    onChange={(event) => handleChange(event, event.target.value, 'Phone')}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth required>
+                    <Autocomplete
+                      options={BloodGroups}
+                      renderInput={(params) => <TextField {...params} label="Blood Group" />}
+                      value={formData.BloodGroup}
+                      onChange={(_, newValue) => handleChange(_, newValue, 'BloodGroup')}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <Autocomplete
+                    options={bangladeshDistricts}
+                    renderInput={(params) => <TextField {...params} fullWidth label="Location" />}
+                    value={formData.district}
+                    onChange={(_, newValue) => handleChange(_, newValue, 'district')}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      value={selectedDate}
+                      onChange={handleDateChange}
+                      renderInput={(params) => <TextField {...params} fullWidth label="Date of Birth" />}
+                      maxDate={new Date()}
+                      required
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item xs={12}>
+                  <RadioGroup value={formData.Gender} onChange={handleGenderChange} row>
+                    <FormControlLabel value="Male" control={<Radio />} label="Male" />
+                    <FormControlLabel value="Female" control={<Radio />} label="Female" />
+                  </RadioGroup>
+                </Grid>
+                <Grid item xs={12}>
+                  <Button type="button" variant="contained" color="primary" onClick={handleCreateEmail}>
+                    Register
+                  </Button>
+                </Grid>
+              </>
+            )}
           </Grid>
         </form>
         <div className="flex justify-end pl-4">
@@ -223,6 +252,7 @@ const Register = () => {
           </p>
         </div>
       </Container>
+      
     </div>
   );
 };

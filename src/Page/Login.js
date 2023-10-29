@@ -5,13 +5,14 @@ import GoogleIcon from '@mui/icons-material/Google';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import firebaseConfig from './firebaseConfig';
+import { ClipLoader } from 'react-spinners';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null); // Add error state
-  console.log("working...");
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false); // Add isLoading state
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth();
@@ -20,7 +21,7 @@ const Login = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        setError(null); // Clear any previous errors on successful login
+        setError(null);
       } else {
         setUser(null);
       }
@@ -32,50 +33,70 @@ const Login = () => {
   const provider = new GoogleAuthProvider();
 
   const handleGoogleSignIn = () => {
+    setIsLoading(true); // Set isLoading to true
     signInWithPopup(auth, provider)
       .then((result) => {
         const user = result.user;
-        setUser(user); // Update the user state on successful login
-        setError(null); // Clear any previous errors
+        setUser(user);
+        setError(null);
+        setIsLoading(false); // Set isLoading to false on success
       })
       .catch((error) => {
-        setError(error.message); // Set the error message on failure
+        setError(error.message);
+        setIsLoading(false); // Set isLoading to false on failure
       });
   };
 
   const handleEmailSignIn = () => {
+    setIsLoading(true); // Set isLoading to true
     if (!email || !password) {
       setError("Required fields are empty");
+      setIsLoading(false); // Set isLoading to false
       return;
     }
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        setUser(user); // Update the user state on successful login
-        setError(null); // Clear any previous errors
-        console.log(user.email);
+        setUser(user);
+        setError(null);
+        setIsLoading(false); // Set isLoading to false on success
       })
       .catch((error) => {
-        setError(error.message); // Set the error message on failure
+        setError(error.message);
+        setIsLoading(false); // Set isLoading to false on failure
       });
   };
 
   const handleSignOut = () => {
+    setIsLoading(true); // Set isLoading to true
     signOut(auth)
       .then(() => {
-        setUser(null); // Clear the user state on sign-out
+        setUser(null);
+        setIsLoading(false); // Set isLoading to false on success
       })
       .catch((error) => {
-        setError(error.message); // Set the error message on failure
+        setError(error.message);
+        setIsLoading(false); // Set isLoading to false on failure
       });
   };
 
   return (
     <div>
       <Nav_Bar></Nav_Bar>
+      {isLoading && (
+        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+          <ClipLoader
+            color={'#d73636'}
+            loading={true}
+            size={150}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        </div>
+      )}
       <Container maxWidth="xs">
-        <Grid elevation={3} style={{ padding: '20px', marginTop: '250px' }}>
+        <Grid elevation={3} style={{ padding: '20px', marginTop: '250px', display: isLoading ? 'none' : 'block' }}>
           {user ? (
             <div>
               <Typography variant="h4" align="center">Welcome, {user.email}</Typography>
@@ -133,10 +154,10 @@ const Login = () => {
               <IconButton onClick={handleGoogleSignIn} style={{ marginTop: '15px', marginRight: '10px' }}>
                 <GoogleIcon />
               </IconButton>
-              {error && <Typography variant="body1" color="error" marginLeft={10}>Username or Passwrod is in incorect</Typography>}
+              {error && <Typography variant="body1" color="error" marginLeft={10}>Username or Password is incorrect</Typography>}
               <div className="flex justify-end ">
                 <p>
-                  Don't have an account?<a href="/register" className="text-black hover:text-blue-500">  Register
+                  Don't have an account?<a href="/register" className="text-black hover-text-blue-500">  Register
                   </a>
                 </p>
               </div>

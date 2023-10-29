@@ -13,6 +13,8 @@ import {
 
 // Firebase Configuration
 import firebaseConfig from './firebaseConfig';
+import { Navbar } from 'react-bootstrap';
+import Nav_Bar from './Nav_Bar';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -54,7 +56,7 @@ const Search_Donors = () => {
         q = query(q, where('bloodGroup', '==', filters.bloodGroup));
       }
       if (filters.district.length > 0) {
-        q = query(q, where('location', 'in', filters.district));
+        q = query(q, where('Location', 'in', filters.district));
       }
       if (filters.donorType && filters.donorType !== 'All') {
         q = query(q, where('donorType', '==', filters.donorType));
@@ -80,6 +82,7 @@ const Search_Donors = () => {
 
   return (
     <div>
+      <Nav_Bar></Nav_Bar>
       <div className="search-donors-container">
         <Autocomplete
           className="search-donors-input"

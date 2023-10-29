@@ -7,11 +7,12 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { doc, getFirestore, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getFirestore, setDoc } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from './firebaseConfig';
 import Nav_Bar from './Nav_Bar';
 import { Typography } from '@mui/material';
+import { ClipLoader } from 'react-spinners';
 
 const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const bangladeshDistricts = [
@@ -27,16 +28,12 @@ const bangladeshDistricts = [
   "Thakurgaon", "Other District"
 ];
 
-
 // Function to update data in Firebase Firestore
 const updateFirestoreData = async (formData) => {
   try {
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    // Replace "yourCollection" and "yourDocument" with your Firestore collection and document names
-    const docRef = doc(db, 'Blood Request', formData.email);
-
-
+    const docRef = doc(db, 'User_Info', formData.email);
 
     // Set the document with the user's data, creating it if it doesn't exist
     await setDoc(docRef, {
@@ -52,16 +49,12 @@ const updateFirestoreData = async (formData) => {
     window.location.href = "/";
   } catch (e) {
     console.error('Error updating Firestore data:', e);
-    
-    // setError("Email address is already in use.");
-
   }
 };
 
-
 const Blood_Request = () => {
   const [error, setError] = useState(null);
-
+  const [isLoading, setLoading] = useState(false); // State for the loading indicator
 
   const [formData, setFormData] = useState({
     name: '',
@@ -73,9 +66,7 @@ const Blood_Request = () => {
     gender: 'Male'
   });
 
-  const [formDataArray, setFormDataArray] = useState([]);
-
-  // Handle form field changes
+  // Define handleChange function to handle form field changes
   const handleChange = (event, newValue, field) => {
     setFormData({
       ...formData,
@@ -83,7 +74,7 @@ const Blood_Request = () => {
     });
   };
 
-  // Handle gender change
+  // Define handleGenderChange function to handle gender changes
   const handleGenderChange = (event) => {
     setFormData({
       ...formData,
@@ -91,30 +82,43 @@ const Blood_Request = () => {
     });
   };
 
-  // Handle form submission
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setFormDataArray([...formDataArray, formData]);
 
-    // Update data in Firestore
-    updateFirestoreData(formData);
+    try {
+      setLoading(true); // Show loading indicator while submitting
+
+      // Update data in Firestore
+      await updateFirestoreData(formData);
+    } catch (e) {
+      setError('Error updating Firestore data: ' + e.message);
+    } finally {
+      setLoading(false); // Hide loading indicator when done
+    }
   };
-
-  // Log formDataArray when it changes
-  useEffect(() => {
-    console.log(formDataArray);
-  }, [formDataArray]);
 
   return (
     <div>
-
-
       <Nav_Bar></Nav_Bar>
-      <Container maxWidth="xs" style={{ marginRight: '10%' }}>
+
+      {/* Preloading code */}
+      {isLoading && (
+        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+          <ClipLoader
+            color={'#d73636'}
+            loading={true}
+            size={150}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        </div>
+      )}
+
+<Container maxWidth="xs" style={{ marginRight: '10%',display: isLoading ? 'none' : 'block' }}>
 
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={2} justifyContent="center" marginTop={20}>
-            <Grid item xs={10}>
+          <Grid container spacing={2} justifyContent="center" marginTop={15}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Name"
@@ -124,7 +128,7 @@ const Blood_Request = () => {
                 required
               />
             </Grid>
-            <Grid item xs={10}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Email"
@@ -135,7 +139,7 @@ const Blood_Request = () => {
                 required
               />
             </Grid>
-            <Grid item xs={10}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Phone"
@@ -149,7 +153,7 @@ const Blood_Request = () => {
                 required
               />
             </Grid>
-            <Grid item xs={10}>
+            <Grid item xs={12}>
               <Autocomplete
                 options={bloodGroups}
                 renderInput={(params) => (
@@ -160,7 +164,7 @@ const Blood_Request = () => {
                 required
               />
             </Grid>
-            <Grid item xs={10}>
+            <Grid item xs={12}>
               <Autocomplete
                 options={bangladeshDistricts}
                 renderInput={(params) => (
@@ -171,18 +175,18 @@ const Blood_Request = () => {
                 required
               />
             </Grid>
-            <Grid item xs={10}>
+            <Grid item xs={12}>
               <RadioGroup
                 aria-label="gender"
                 name="gender"
                 value={formData.gender}
-                onChange={handleGenderChange}
+                onChange={handleGenderChange} 
               >
                 <FormControlLabel value="Male" control={<Radio />} label="Male" />
                 <FormControlLabel value="Female" control={<Radio />} label="Female" />
               </RadioGroup>
             </Grid>
-            <Grid item xs={10} style={{ textAlign: 'center' }}>
+            <Grid item xs={12} style={{ textAlign: 'center' }}>
               <Button
                 type="submit"
                 variant="contained"
@@ -195,9 +199,6 @@ const Blood_Request = () => {
               >
                 Request
               </Button>
-
-              
-         
             </Grid>
           </Grid>
         </form>

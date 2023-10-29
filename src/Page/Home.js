@@ -54,7 +54,7 @@ const Home = () => {
 
       <section id="donors">
         <h2>Our Donors</h2>
-        {/* You can display donor information here */}
+      
       </section>
 
       <section id="recipients">
