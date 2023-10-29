@@ -50,6 +50,7 @@ const Register = () => {
     Gender: 'Male',
     password: '',
     district: '',
+    DonorType: 'Not Eligible'
   });
 
   const [selectedDate, setSelectedDate] = useState(null);
@@ -60,9 +61,9 @@ const Register = () => {
     setError(null);
     setIsLoading(true);
 
-    const { Email, password, Name, Phone, district, DateOfBirth, Gender, BloodGroup } = formData;
+    const { Email, password, Name, Phone, district, DateOfBirth, Gender, BloodGroup,DonorType } = formData;
 
-    if (!Email || !password || !Name || !Phone || !district || !DateOfBirth || !Gender || !BloodGroup) {
+    if (!Email || !password || !Name || !Phone || !district || !DateOfBirth || !Gender || !BloodGroup || !DonorType) {
       setError("Required fields are empty");
       setIsLoading(false);
       return;
@@ -92,6 +93,7 @@ const Register = () => {
           Location: district,
           DateOfBirth,
           Gender,
+          DonorType,
           AccountCreate
         };
 
@@ -120,6 +122,12 @@ const Register = () => {
     setFormData({
       ...formData,
       Gender: event.target.value,
+    });
+  };
+  const handleEligibleChange = (event) => {
+    setFormData({
+      ...formData,
+      DonorType: event.target.value,
     });
   };
 
@@ -237,7 +245,18 @@ const Register = () => {
                   </RadioGroup>
                 </Grid>
                 <Grid item xs={12}>
-                  <Button type="button" variant="contained" color="primary" onClick={handleCreateEmail}>
+                  <h2 className=' mb-1'>Are You Eligible For Donate Blood?</h2>
+                  <RadioGroup value={formData.DonorType} onChange={handleEligibleChange} row>
+                    <FormControlLabel value="Eligible" control={<Radio />} label="Yes" />
+                    <FormControlLabel value="Not Eligible" control={<Radio />} label="No" />
+                  </RadioGroup>
+                </Grid>
+                <Grid item xs={12}>
+                  <Button type="button" variant="contained" color="primary" onClick={handleCreateEmail} style={
+                  {backgroundColor: 'primary',
+                  color: 'white',
+                  fontSize: '15px',
+                  padding: '15px 30px'}}>
                     Register
                   </Button>
                 </Grid>

@@ -95,7 +95,7 @@ const Login = () => {
           />
         </div>
       )}
-      <Container maxWidth="xs">
+      <Container maxWidth="xs" className='shadow-xl rounded-xl'>
         <Grid elevation={3} style={{ padding: '20px', marginTop: '250px', display: isLoading ? 'none' : 'block' }}>
           {user ? (
             <div>
@@ -157,7 +157,7 @@ const Login = () => {
               {error && <Typography variant="body1" color="error" marginLeft={10}>Username or Password is incorrect</Typography>}
               <div className="flex justify-end ">
                 <p>
-                  Don't have an account?<a href="/register" className="text-black hover-text-blue-500">  Register
+                  Don't have an account?<a href="/register" className="text-black hover:text-blue-500">  Register
                   </a>
                 </p>
               </div>

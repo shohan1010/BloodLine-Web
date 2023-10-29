@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Autocomplete, TextField, Button } from '@mui/material';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+import { ClipLoader } from 'react-spinners';
 import {
   Card,
   CardContent,
@@ -20,7 +21,7 @@ import Nav_Bar from './Nav_Bar';
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const bangladeshDistricts = [
+const bangladeshLocations = [
   "Bagerhat", "Bandarban", "Barguna", "Barishal", "Bhola", "Bogura", "Brahmanbaria",
   "Chandpur", "Chapai Nawabganj", "Chattogram", "Chuadanga", "Comilla", "Cox's Bazar",
   "Dhaka", "Dinajpur", "Faridpur", "Feni", "Gaibandha", "Gazipur", "Gopalganj", "Habiganj",
@@ -30,19 +31,19 @@ const bangladeshDistricts = [
   "Narayanganj", "Narsingdi", "Natore", "Netrokona", "Nilphamari", "Noakhali", "Pabna",
   "Panchagarh", "Patuakhali", "Pirojpur", "Rajbari", "Rajshahi", "Rangamati", "Rangpur",
   "Satkhira", "Shariatpur", "Sherpur", "Sirajganj", "Sunamganj", "Sylhet", "Tangail",
-  "Thakurgaon", "Other District"
+  "Thakurgaon", "Other district"
 ];
-
 
 const Search_Donors = () => {
   const [items, setItems] = useState([]);
   const [filters, setFilters] = useState({
-    bloodGroup: '',
-    district: [],
-    donorType: '',
+    BloodGroup: '',
+    Location: [], // Use an array to store selected locations
+    DonorType: '',
   });
 
   const [isHovered, setIsHovered] = useState(null);
+  const [isLoading, setLoading] = useState(false);
 
   const handleInputChange = (name, value) => {
     setFilters({ ...filters, [name]: value });
@@ -50,16 +51,25 @@ const Search_Donors = () => {
 
   const searchUsers = async () => {
     try {
+      setLoading(true);
       let q = query(collection(db, 'cities'));
 
-      if (filters.bloodGroup) {
-        q = query(q, where('bloodGroup', '==', filters.bloodGroup));
+      if (filters.BloodGroup) {
+        q = query(q, where('BloodGroup', '==', filters.BloodGroup));
       }
-      if (filters.district.length > 0) {
-        q = query(q, where('Location', 'in', filters.district));
+      if (filters.Location.length > 0) { // Check if locations are selected
+        q = query(q, where('Location', 'in', filters.Location));
       }
-      if (filters.donorType && filters.donorType !== 'All') {
-        q = query(q, where('donorType', '==', filters.donorType));
+      {
+
+        if (filters.DonorType) {
+          if (filters.DonorType !== 'All') {
+            q = query(q, where('DonorType', '==', filters.DonorType));
+          } else {
+            console.log("DonorType is 'All");
+          }
+        }
+        
       }
 
       const querySnapshot = await getDocs(q);
@@ -72,6 +82,8 @@ const Search_Donors = () => {
       setItems(users);
     } catch (error) {
       console.error('Error searching for users:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,7 +98,7 @@ const Search_Donors = () => {
       <div className="search-donors-container">
         <Autocomplete
           className="search-donors-input"
-          name="bloodGroup"
+          name="BloodGroup"
           options={['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']}
           renderInput={(params) => (
             <TextField
@@ -95,20 +107,20 @@ const Search_Donors = () => {
               variant="outlined"
             />
           )}
-          onChange={(event, value) => handleInputChange('bloodGroup', value)}
+          onChange={(event, value) => handleInputChange('BloodGroup', value)}
         />
         <Autocomplete
           className="search-donors-input"
-          name="district"
-          options={bangladeshDistricts}
+          name="Location"
+          options={bangladeshLocations}
           renderInput={(params) => (
             <TextField
               {...params}
-              label="District"
+              label="Location"
               variant="outlined"
             />
           )}
-          onChange={(event, value) => handleInputChange('district', value)}
+          onChange={(event, value) => handleInputChange('Location', value)}
           multiple={true}
           filterOptions={(options, state) => {
             return options.filter((option) =>
@@ -118,7 +130,7 @@ const Search_Donors = () => {
         />
         <Autocomplete
           className="search-donors-input"
-          name="donorType"
+          name="DonorType"
           options={['All', 'Eligible']}
           renderInput={(params) => (
             <TextField
@@ -127,7 +139,7 @@ const Search_Donors = () => {
               variant="outlined"
             />
           )}
-          onChange={(event, value) => handleInputChange('donorType', value)}
+          onChange={(event, value) => handleInputChange('DonorType', value)}
         />
 
         <Button
@@ -140,9 +152,22 @@ const Search_Donors = () => {
         </Button>
       </div>
 
+      {/* Preloading code */}
+      {isLoading && (
+        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+          <ClipLoader
+            color={'#d73636'}
+            loading={true}
+            size={150}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        </div>
+      )}
+      {/* Preloading code */}
+
       <div>
-        
-        <Grid container spacing={2}>
+        <Grid container spacing={2} style={{ display: isLoading ? 'none' : 'flex' }}>
           {items.map((item, index) => (
             <Grow in={true} key={index} timeout={500}>
               <Grid item xs={12} sm={6} md={4} lg={3}>
@@ -163,16 +188,16 @@ const Search_Donors = () => {
                     }}
                   >
                     <Typography variant="h5" component="div">
-                      {item.name}
+                      {item.Name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Blood Group: {item.bloodGroup}
+                      Blood Group: {item.BloodGroup}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Gender: {item.gender}
+                      Gender: {item.Gender}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Location: {item.location}
+                      Location: {item.Location}
                     </Typography>
                     {/* Add more information here */}
                   </CardContent>

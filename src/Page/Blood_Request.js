@@ -113,6 +113,8 @@ const Blood_Request = () => {
           />
         </div>
       )}
+      {/* Preloading code */}
+
 
 <Container maxWidth="xs" style={{ marginRight: '10%',display: isLoading ? 'none' : 'block' }}>
 
@@ -194,7 +196,7 @@ const Blood_Request = () => {
                   backgroundColor: 'primary',
                   color: 'white',
                   fontSize: '15px',
-                  padding: '15px 30px',
+                  padding: '15px 30px'
                 }}
               >
                 Request
