@@ -82,32 +82,4 @@ footer {
 }
 
 
-/*  */
-
-/* Center the form horizontally */
-.search-donors-container {
-  position: relative;
-  width: 100%; /* 100% width of its parent container */
-  padding-bottom: 5%; /* 3/2 aspect ratio */
-
-  /* Your other styles */
-  max-width: 900px;
-  margin: 0 auto;
-  margin-top: 80px;
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center; /* Center items horizontally */
-
- 
-}
-
-
-
-/* Style each input (Autocomplete) element */
-.search-donors-input {
-  width: 100%;
-  margin: 5px 0; /* Add space between the inputs */
-}
 

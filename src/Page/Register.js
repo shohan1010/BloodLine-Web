@@ -49,8 +49,8 @@ const Register = () => {
     DateOfBirth: null,
     Gender: 'Male',
     password: '',
-    district: '',
-    DonorType: 'Not Eligible'
+    Location: '',
+    DonorType: 'Eligible'
   });
 
   const [selectedDate, setSelectedDate] = useState(null);
@@ -61,9 +61,9 @@ const Register = () => {
     setError(null);
     setIsLoading(true);
 
-    const { Email, password, Name, Phone, district, DateOfBirth, Gender, BloodGroup,DonorType } = formData;
+    const { Email, password, Name, Phone, Location, DateOfBirth, Gender, BloodGroup,DonorType } = formData;
 
-    if (!Email || !password || !Name || !Phone || !district || !DateOfBirth || !Gender || !BloodGroup || !DonorType) {
+    if (!Email || !password || !Name || !Phone || !Location || !DateOfBirth || !Gender || !BloodGroup || !DonorType) {
       setError("Required fields are empty");
       setIsLoading(false);
       return;
@@ -84,13 +84,13 @@ const Register = () => {
       const AccountCreate = new Date();
 
       if (user) {
-        const setdata = doc(db, "cities", Email);
+        const setdata = doc(db, "User_Info", Email);
         const newData = {
           Name,
           Email,
           Phone,
           BloodGroup,
-          Location: district,
+          Location,
           DateOfBirth,
           Gender,
           DonorType,
@@ -222,8 +222,8 @@ const Register = () => {
                   <Autocomplete
                     options={bangladeshDistricts}
                     renderInput={(params) => <TextField {...params} fullWidth label="Location" />}
-                    value={formData.district}
-                    onChange={(_, newValue) => handleChange(_, newValue, 'district')}
+                    value={formData.Location}
+                    onChange={(_, newValue) => handleChange(_, newValue, 'Location')}
                     required
                   />
                 </Grid>

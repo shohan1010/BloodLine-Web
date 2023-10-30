@@ -95,9 +95,9 @@ const Search_Donors = () => {
   return (
     <div>
       <Nav_Bar></Nav_Bar>
-      <div className="search-donors-container">
+      <div className="relative w-full pb-5/3 max-w-5xl mx-auto mt-32 flex flex-row items-center justify-center">
         <Autocomplete
-          className="search-donors-input"
+          className="w-1/3"
           name="BloodGroup"
           options={['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']}
           renderInput={(params) => (
@@ -110,7 +110,7 @@ const Search_Donors = () => {
           onChange={(event, value) => handleInputChange('BloodGroup', value)}
         />
         <Autocomplete
-          className="search-donors-input"
+          className="w-1/3"
           name="Location"
           options={bangladeshLocations}
           renderInput={(params) => (
@@ -129,7 +129,7 @@ const Search_Donors = () => {
           }}
         />
         <Autocomplete
-          className="search-donors-input"
+          className="w-1/3"
           name="DonorType"
           options={['All', 'Eligible']}
           renderInput={(params) => (
@@ -166,7 +166,7 @@ const Search_Donors = () => {
       )}
       {/* Preloading code */}
 
-      <div>
+      <div className=' mt-20 pl-3 pr-3'>
         <Grid container spacing={2} style={{ display: isLoading ? 'none' : 'flex' }}>
           {items.map((item, index) => (
             <Grow in={true} key={index} timeout={500}>

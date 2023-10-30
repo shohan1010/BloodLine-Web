@@ -28,6 +28,7 @@ const Home = () => {
         setUser(user);
       } else {
         setUser(null);
+        console.log("not authenticated");
       }
     });
 
@@ -42,9 +43,15 @@ const Home = () => {
       <Nav_Bar />
 
       <section id="hero">
-        <h2>Welcome to our Blood Donation</h2>
-        <p>Help save lives by donating blood. Your contribution can make a difference.</p>
-        <button className="btn" onClick={donateNow}>Donate Now</button>
+      <div className="flex justify-center items-center text-center flex-col">
+  <h1 className="text-3xl font-bold">Welcome to our Blood Donation</h1>
+  <p className="text-lg text-center mt-3">
+    Help save lives by donating blood. Your contribution can make a difference.
+  </p>
+</div>
+
+
+        <button className="btn mt-32" onClick={donateNow}>Donate Now</button>
       </section>
 
       <section id="about">
