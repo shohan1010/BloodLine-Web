@@ -10,6 +10,16 @@ const Nav_Bar = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const auth = getAuth();
 
+  // Function to set user session data
+  const setUserSession = (userData) => {
+    localStorage.setItem('userSession', JSON.stringify(userData));
+  };
+
+  // Function to clear user session data
+  const clearUserSession = () => {
+    localStorage.removeItem('userSession');
+  };
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -22,7 +32,9 @@ const Nav_Bar = () => {
     signOut(auth)
       .then(() => {
         setUser(null);
-        handleClose(); // Close the menu after successful logout
+        clearUserSession(); // Clear the user session on successful logout
+        handleClose();
+         // Close the menu after successful logout
       })
       .catch((error) => {
         console.error('Logout error:', error);
@@ -30,11 +42,20 @@ const Nav_Bar = () => {
   };
 
   useEffect(() => {
+    // Check if there's a user session in local storage
+    const storedSession = localStorage.getItem('userSession');
+    if (storedSession) {
+      const userData = JSON.parse(storedSession);
+      setUser(userData);
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
+        setUserSession(user); // Store the user session on login
       } else {
         setUser(null);
+        clearUserSession(); // Clear the user session on logout
         console.log("User not authenticated");
       }
     });

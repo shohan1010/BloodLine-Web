@@ -52,7 +52,7 @@ const Search_Donors = () => {
   const searchUsers = async () => {
     try {
       setLoading(true);
-      let q = query(collection(db, 'cities'));
+      let q = query(collection(db, 'User_Info'));
 
       if (filters.BloodGroup) {
         q = query(q, where('BloodGroup', '==', filters.BloodGroup));
