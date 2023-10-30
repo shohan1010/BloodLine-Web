@@ -93,7 +93,7 @@ const Search_Donors = () => {
   }, []);
 
   return (
-    <div>
+    <div className=''>
       <Nav_Bar></Nav_Bar>
       <div className="relative w-full pb-5/3 max-w-5xl mx-auto mt-32 flex flex-row items-center justify-center">
         <Autocomplete

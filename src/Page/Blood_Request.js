@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
@@ -7,11 +7,10 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { doc, getFirestore, setDoc } from 'firebase/firestore';
+import { collection, doc, getFirestore, setDoc } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from './firebaseConfig';
 import Nav_Bar from './Nav_Bar';
-import { Typography } from '@mui/material';
 import { ClipLoader } from 'react-spinners';
 
 const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
@@ -28,45 +27,55 @@ const bangladeshDistricts = [
   "Thakurgaon", "Other District"
 ];
 
-// Function to update data in Firebase Firestore
 const updateFirestoreData = async (formData) => {
   try {
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const docRef = doc(db, 'User_Info', formData.email);
 
-    // Set the document with the user's data, creating it if it doesn't exist
-    await setDoc(docRef, {
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      bloodGroup: formData.bloodGroup,
-      location: formData.location,
-      gender: formData.gender,
-    }, { merge: true });
+    // Define the main collection reference
+    const mainCollectionRef = collection(db, 'show data'); // Replace 'Your_Main_Collection_Name' with the desired main collection name
+
+    // Define the document reference in the main collection
+    const mainDocRef = doc(mainCollectionRef, formData.Email); // You can use a unique identifier for the document here
+
+    // Define a subcollection reference within the main document
+    const subcollectionRef = collection(mainDocRef, 'Blood Request'); // Replace 'Your_Subcollection_Name' with the desired subcollection name
+
+    // Create a new document in the subcollection with data
+    const subDocRef = doc(subcollectionRef); // Firestore will generate a unique document ID for the subcollection document
+
+    await setDoc(subDocRef, {
+      Name: formData.Name,
+      Email: formData.Email,
+      Phone: formData.Phone,
+      BloodGroup: formData.BloodGroup,
+      Location: formData.Location,
+      Gender: formData.Gender,
+    });
 
     console.log('Firestore data updated successfully');
+    // Use window.location.href with a lowercase 'L' to change the page location
     window.location.href = "/";
   } catch (e) {
     console.error('Error updating Firestore data:', e);
   }
 };
 
+
 const Blood_Request = () => {
   const [error, setError] = useState(null);
-  const [isLoading, setLoading] = useState(false); // State for the loading indicator
+  const [isLoading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    bloodGroup: '',
-    location: '',
+    Name: '',
+    Email: '',
+    Phone: '',
+    BloodGroup: '',
+    Location: '',
     dateOfBirth: null,
-    gender: 'Male'
+    Gender: 'Male',
   });
 
-  // Define handleChange function to handle form field changes
   const handleChange = (event, newValue, field) => {
     setFormData({
       ...formData,
@@ -74,11 +83,10 @@ const Blood_Request = () => {
     });
   };
 
-  // Define handleGenderChange function to handle gender changes
   const handleGenderChange = (event) => {
     setFormData({
       ...formData,
-      gender: event.target.value,
+      Gender: event.target.value,
     });
   };
 
@@ -86,14 +94,12 @@ const Blood_Request = () => {
     event.preventDefault();
 
     try {
-      setLoading(true); // Show loading indicator while submitting
-
-      // Update data in Firestore
+      setLoading(true);
       await updateFirestoreData(formData);
     } catch (e) {
       setError('Error updating Firestore data: ' + e.message);
     } finally {
-      setLoading(false); // Hide loading indicator when done
+      setLoading(false);
     }
   };
 
@@ -101,7 +107,6 @@ const Blood_Request = () => {
     <div>
       <Nav_Bar></Nav_Bar>
 
-      {/* Preloading code */}
       {isLoading && (
         <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
           <ClipLoader
@@ -112,21 +117,18 @@ const Blood_Request = () => {
             data-testid="loader"
           />
         </div>
-      )}
-      {/* Preloading code */}
+     ) }
 
-
-<Container maxWidth="xs" style={{ marginRight: '10%',display: isLoading ? 'none' : 'block' }}>
-
+      <Container maxWidth="xs" style={{ marginRight: '10%', display: isLoading ? 'none' : 'block' }}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2} justifyContent="center" marginTop={15}>
             <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Name"
-                name="name"
-                value={formData.name}
-                onChange={(e) => handleChange(e, e.target.value, 'name')}
+                name="Name" 
+                value={formData.Name}
+                onChange={(e) => handleChange(e, e.target.value, 'Name')}
                 required
               />
             </Grid>
@@ -134,10 +136,10 @@ const Blood_Request = () => {
               <TextField
                 fullWidth
                 label="Email"
-                name="email"
+                name="Email" 
                 type="email"
-                value={formData.email}
-                onChange={(e) => handleChange(e, e.target.value, 'email')}
+                value={formData.Email}
+                onChange={(e) => handleChange(e, e.target.value, 'Email')}
                 required
               />
             </Grid>
@@ -145,12 +147,12 @@ const Blood_Request = () => {
               <TextField
                 fullWidth
                 label="Phone"
-                name="phone"
+                name="Phone" 
                 type="tel"
-                value={formData.phone}
+                value={formData.Phone}
                 onChange={(e) => {
                   const newValue = e.target.value.slice(0, 11);
-                  handleChange(e, newValue, 'phone');
+                  handleChange(e, newValue, 'Phone');
                 }}
                 required
               />
@@ -159,10 +161,10 @@ const Blood_Request = () => {
               <Autocomplete
                 options={bloodGroups}
                 renderInput={(params) => (
-                  <TextField {...params} fullWidth label="Blood Group" name="bloodGroup" />
+                  <TextField {...params} fullWidth label="Blood Group" name="BloodGroup" />
                 )}
-                value={formData.bloodGroup}
-                onChange={(_, newValue) => handleChange(_, newValue, 'bloodGroup')}
+                value={formData.BloodGroup}
+                onChange={(_, newValue) => handleChange(_, newValue, 'BloodGroup')}
                 required
               />
             </Grid>
@@ -170,19 +172,19 @@ const Blood_Request = () => {
               <Autocomplete
                 options={bangladeshDistricts}
                 renderInput={(params) => (
-                  <TextField {...params} fullWidth label="Location" name="location" />
+                  <TextField {...params} fullWidth label="Location" name="Location" />
                 )}
-                value={formData.location}
-                onChange={(_, newValue) => handleChange(_, newValue, 'location')}
+                value={formData.Location}
+                onChange={(_, newValue) => handleChange(_, newValue, 'Location')}
                 required
               />
             </Grid>
             <Grid item xs={12}>
               <RadioGroup
-                aria-label="gender"
-                name="gender"
-                value={formData.gender}
-                onChange={handleGenderChange} 
+                aria-label="Gender"
+                name="Gender"
+                value={formData.Gender}
+                onChange={handleGenderChange}
               >
                 <FormControlLabel value="Male" control={<Radio />} label="Male" />
                 <FormControlLabel value="Female" control={<Radio />} label="Female" />

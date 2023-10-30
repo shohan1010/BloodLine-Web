@@ -78,11 +78,13 @@ const Nav_Bar = () => {
               <li className="inline-block mx-4">
                 <a href="/Search_Donors" className="text-white no-underline">Search Donors</a>
               </li>
-              <li className="inline-block mx-4">
+              
+              {user ? (
+                
+                <div className=' rounded-xl'>
+                  <li className="inline-block mx-4">
                 <a href="/Blood_Request" className="text-white no-underline">Blood Request</a>
               </li>
-              {user ? (
-                <div className=' rounded-xl'>
                   <Button
                     variant="contained"
                     color="primary"
