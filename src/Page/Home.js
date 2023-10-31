@@ -114,7 +114,7 @@ const Home = () => {
   
     {/* Form for appointments */}
   
-    <footer className="bg-red-600 p-4 text-center text-white">
+    <footer className="#c03c38 p-4 text-center text-white shadow-2xl">
       <Typography variant="body2">&copy; 2023 Blood Donation</Typography>
     </footer>
   

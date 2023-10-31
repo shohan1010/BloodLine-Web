@@ -17,6 +17,8 @@ const Login = () => {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth();
 
+  
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
