@@ -1,4 +1,4 @@
-<Nav_Bar />
+{/* <Nav_Bar />
       <div className="search-donors-container">
         <Autocomplete
           className="search-donors-input"
@@ -55,4 +55,4 @@
         >
           Search
         </Button>
-      </div>
+      </div> */}

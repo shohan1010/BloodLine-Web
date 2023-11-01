@@ -12,7 +12,7 @@ const Home = () => {
     alert("Thank you for your willingness to donate blood. Your contribution can save lives!");
   }
 
-  const app = initializeApp(firebaseConfig);
+  // const app = initializeApp(firebaseConfig);
 
   const [user, setUser] = useState(null);
 
@@ -108,11 +108,11 @@ const Home = () => {
         <p className="text-gray-700">Most people over age 16 and in good health can donate blood...</p> 
       </div>
   
-      {/* Additional FAQs */}
+    
   
     </section>
   
-    {/* Form for appointments */}
+ 
   
     <footer className="#c03c38 p-4 text-center text-white shadow-2xl">
       <Typography variant="body2">&copy; 2023 Blood Donation</Typography>
