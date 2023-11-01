@@ -61,8 +61,8 @@ const Home = () => {
 
 
   </div>
-  <div className="bg-cover bg-center rounded-lg" style={{ backgroundImage: 'url("hero-image.jpg")', height: '30rem', flex: '1' }}>
-  </div>
+  {/* <div className="bg-cover bg-center rounded-lg" style={{ backgroundImage: 'url("D:\Project\BloodLine-Web\src\img\as.png")', height: '30rem', flex: '1' }}>
+  </div> */}
 </section>
 
 

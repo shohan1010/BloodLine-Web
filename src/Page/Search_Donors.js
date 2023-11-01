@@ -166,7 +166,7 @@ const Search_Donors = () => {
       )}
       {/* Preloading code */}
 
-      <div className=' mt-20 pl-3 pr-3'>
+      <div className=' mt-20 pl-10 pr-10'>
         <Grid container spacing={2} style={{ display: isLoading ? 'none' : 'flex' }}>
           {items.map((item, index) => (
             <Grow in={true} key={index} timeout={500}>
