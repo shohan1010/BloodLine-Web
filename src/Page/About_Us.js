@@ -2,7 +2,7 @@ import React from 'react';
 import Nav_Bar from './Nav_Bar';
 
 
-const About_us = () => {
+const About_Us = () => {
   return (
     <div>
       <Nav_Bar></Nav_Bar>
@@ -12,4 +12,4 @@ const About_us = () => {
   );
 };
 
-export default About_us;
+export default About_Us;

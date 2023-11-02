@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Autocomplete, TextField, Button } from '@mui/material';
+import { Autocomplete, TextField, Button, Avatar } from '@mui/material';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import { ClipLoader } from 'react-spinners';
@@ -69,7 +69,7 @@ const Search_Donors = () => {
             console.log("DonorType is 'All");
           }
         }
-        
+
       }
 
       const querySnapshot = await getDocs(q);
@@ -170,39 +170,90 @@ const Search_Donors = () => {
         <Grid container spacing={2} style={{ display: isLoading ? 'none' : 'flex' }}>
           {items.map((item, index) => (
             <Grow in={true} key={index} timeout={500}>
-              <Grid item xs={12} sm={6} md={4} lg={3}>
-                <Card
-                  onMouseEnter={() => setIsHovered(index)}
-                  onMouseLeave={() => setIsHovered(null)}
-                  variant="outlined"
-                  style={{
-                    backgroundColor: isHovered === index ? '#f0f0f0' : 'white',
-                    transition: 'background-color 0.3s',
-                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-                  }}
-                >
-                  <CardContent
-                    style={{
-                      transition: 'transform 0.3s',
-                      transform: isHovered === index ? 'scale(1.05)' : 'scale(1)',
-                    }}
-                  >
-                    <Typography variant="h5" component="div">
-                      {item.Name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Blood Group: {item.BloodGroup}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Gender: {item.Gender}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Location: {item.Location}
-                    </Typography>
-                    {/* Add more information here */}
-                  </CardContent>
-                </Card>
-              </Grid>
+
+
+<Grid item xs={12} sm={6} md={4} lg={3}>
+  <Card
+    onMouseEnter={() => setIsHovered(index)}
+    onMouseLeave={() => setIsHovered(null)}
+    variant="elevation" // Change to "outlined" for a softer look
+    elevation={isHovered === index ? 8 : 2}
+    style={{
+      backgroundColor: isHovered === index ? '#f0f0f0' : 'white',
+      transition: 'background-color 0.3s',
+      borderRadius: '12px',
+      overflow: 'hidden',
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)', // Add box shadow for depth
+    }}
+  >
+    <div
+      style={{
+        background: `url(${item.ProfileImage || (item.Gender === 'Male' ? 'https://static.vecteezy.com/system/resources/thumbnails/004/511/281/small/default-avatar-photo-placeholder-profile-picture-vector.jpg' : 'https://cdn4.vectorstock.com/i/1000x1000/14/18/default-female-avatar-profile-picture-icon-grey-vector-34511418.jpg')})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        width: '200px', // Adjust the width and height for a full round look
+        height: '200px',
+        borderRadius: '50%', // Make the image round
+        border: '2px solid #fff', // Add a border for a cleaner look
+      }}
+    ></div>
+    <div style={{ padding: '20px' }}>
+      <Typography
+        variant="h5"
+        color="primary"
+        style={{ textAlign: 'center', fontSize: '1.5rem' }}
+      >
+        {item.Name}
+      </Typography>
+      <Typography
+        variant="body2"
+        color="textSecondary"
+        style={{ textAlign: 'center', fontSize: '1.2rem' }}
+      >
+        Gender: {item.Gender}
+      </Typography>
+      <Typography
+        variant="body2"
+        color="textSecondary"
+        style={{ textAlign: 'center', fontSize: '1.2rem' }}
+      >
+        Location: {item.Location}
+      </Typography>
+      <Typography
+        variant="body2"
+        color="textSecondary"
+        style={{ textAlign: 'center', fontSize: '1.2rem' }}
+      >
+        Phone: {item.Phone}
+      </Typography>
+      <Typography
+        variant="h6"
+        color="secondary"
+        style={{ textAlign: 'center', fontSize: '1.5rem', margin: '10px' }}
+      >
+        {item.BloodGroup}
+      </Typography>
+    </div>
+  </Card>
+</Grid>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             </Grow>
           ))}
         </Grid>

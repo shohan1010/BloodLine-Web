@@ -54,15 +54,16 @@ const Home = () => {
     <Button variant="contained" color="primary" onClick={donateNow} className="bg-red-600 hover:bg-red-700 mt-6 px-8 py-3 rounded-full text-xl">
       Donate Now
     </Button>
-    {/* <img src="https://i.ibb.co/kHK6ywG/1.png" alt="1" /> */}
+    
 
 
 
 
 
   </div>
-  {/* <div className="bg-cover bg-center rounded-lg" style={{ backgroundImage: 'url("D:\Project\BloodLine-Web\src\img\as.png")', height: '30rem', flex: '1' }}>
-  </div> */}
+  <div><img src="https://i.ibb.co/kHK6ywG/1.png" alt="1" /></div>
+  
+  
 </section>
 
 

@@ -34,10 +34,10 @@ function App() {
   });
 
   useEffect(() => {
- 
-  initializeApp(firebaseConfig);
 
-  const auth = getAuth();
+    initializeApp(firebaseConfig);
+
+    const auth = getAuth();
 
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -63,7 +63,11 @@ function App() {
         <Router>
           <Switch>
 
-            
+          <Route path='/Login'>
+              <Login />
+            </Route>
+
+
 
             // ProtectedRoute
             <ProtectedRoute
@@ -77,20 +81,25 @@ function App() {
               isAuthenticated={isAuthenticated}
             />
 
+
+            <ProtectedRoute
+              path="/Register"
+              component={History}
+              isAuthenticated={!isAuthenticated}
+            />
+
             // Normal Route
-            <Route path='/Login'>
-              <Login />
-            </Route>
+            
             {/* <Route path='/Blood_Request'>
               <Login />
             </Route> */}
-            <Route path='/Register'>
+            {/* <Route path='/Register'>
               <Register />
-            </Route>
+            </Route> */}
             <Route path='/Search_Donors'>
               <Search_Donors />
             </Route>
-            
+
             <Route exact path='/'>
               <Home />
             </Route>
