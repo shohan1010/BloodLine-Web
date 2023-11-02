@@ -62,6 +62,8 @@ const Home = () => {
 
   </div>
   <div><img src="https://i.ibb.co/kHK6ywG/1.png" alt="1" /></div>
+  {/* <div><img src="https://i.ibb.co/Mc9ZZkC/Screenshot-2023-11-03-041345.png" alt="1" /></div> */}
+  
   
   
 </section>
