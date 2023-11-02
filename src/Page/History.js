@@ -32,7 +32,7 @@
 
             querySnapshot.forEach((doc) => {
               const data = doc.data();
-              userData.push({ ...data, id: doc.id }); // Include document ID for delete functionality
+              userData.push({ ...data, id: doc.id }); 
             });
 
             setUserEmail(currentUserEmail);
@@ -45,7 +45,7 @@
         }
       });
 
-      // Moved the return statement outside of the useEffect
+  
     }, []);
 
     const handleDelete = async (documentId) => {
@@ -53,20 +53,26 @@
       const db = getFirestore(app);
       const userDocRef = doc(db, 'show data', userEmail);
       const subcollectionRef = collection(userDocRef, 'Blood Request');
-
-      try {
-        await deleteDoc(doc(subcollectionRef, documentId));
-        // Now, update your local state to reflect the deletion
-        setUserData((prevUserData) => prevUserData.filter((doc) => doc.id !== documentId));
-      } catch (error) {
-        console.error('Error deleting document:', error);
+    
+      // Display a confirmation dialog to check if the user want to delete or not
+      const isConfirmed = window.confirm('Are you sure you want to delete this Blood Request?');
+    
+      if (isConfirmed) {
+        try {
+          // firebase firestore delete collection
+          await deleteDoc(doc(subcollectionRef, documentId));
+          setUserData((prevUserData) => prevUserData.filter((doc) => doc.id !== documentId));
+        } catch (error) {
+          console.error('Error deleting document:', error);
+        }
       }
     };
+    
 
     return (
       <div>
         <Nav_Bar />
-        <h1 className=' text-center mt-5 '>User Blood Request History</h1>
+        <h1 className=' text-center mt-5 '>Your Blood Request History</h1>
 
         {isLoading && (
           <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>

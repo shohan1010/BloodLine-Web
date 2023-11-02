@@ -69,7 +69,7 @@ const Nav_Bar = () => {
     });
 
     return () => {
-      unsubscribe(); // Unsubscribe when the component unmounts
+      unsubscribe(); 
     };
   }, []);
 

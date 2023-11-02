@@ -12,7 +12,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // Add isLoading state
+  const [isLoading, setIsLoading] = useState(false); 
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth();
@@ -35,25 +35,25 @@ const Login = () => {
   const provider = new GoogleAuthProvider();
 
   const handleGoogleSignIn = () => {
-    setIsLoading(true); // Set isLoading to true
+    setIsLoading(true); 
     signInWithPopup(auth, provider)
       .then((result) => {
         const user = result.user;
         setUser(user);
         setError(null);
-        setIsLoading(false); // Set isLoading to false on success
+        setIsLoading(false);
       })
       .catch((error) => {
         setError(error.message);
-        setIsLoading(false); // Set isLoading to false on failure
+        setIsLoading(false);
       });
   };
 
   const handleEmailSignIn = () => {
-    setIsLoading(true); // Set isLoading to true
+    setIsLoading(true); 
     if (!email || !password) {
       setError("Required fields are empty");
-      setIsLoading(false); // Set isLoading to false
+      setIsLoading(false);
       return;
     }
 
@@ -62,24 +62,24 @@ const Login = () => {
         const user = userCredential.user;
         setUser(user);
         setError(null);
-        setIsLoading(false); // Set isLoading to false on success
+        setIsLoading(false); 
       })
       .catch((error) => {
         setError(error.message);
-        setIsLoading(false); // Set isLoading to false on failure
+        setIsLoading(false); 
       });
   };
 
   const handleSignOut = () => {
-    setIsLoading(true); // Set isLoading to true
+    setIsLoading(true); 
     signOut(auth)
       .then(() => {
         setUser(null);
-        setIsLoading(false); // Set isLoading to false on success
+        setIsLoading(false); 
       })
       .catch((error) => {
         setError(error.message);
-        setIsLoading(false); // Set isLoading to false on failure
+        setIsLoading(false); 
       });
   };
 

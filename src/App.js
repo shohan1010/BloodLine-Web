@@ -20,7 +20,7 @@ import History from './Page/History';
 
 
 
-// Import Firebase and initialize it here
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -34,8 +34,7 @@ function App() {
   });
 
   useEffect(() => {
-    // Import Firebase and the authentication module
-    // Initialize Firebase here
+ 
   initializeApp(firebaseConfig);
 
   const auth = getAuth();

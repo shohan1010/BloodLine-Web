@@ -72,7 +72,7 @@ const Register = () => {
     try {
       const signInMethods = await fetchSignInMethodsForEmail(auth, Email);
 
-      // if the location of the user already exists
+      // Check if the user already exists
       if (signInMethods && signInMethods.length > 0) {
         setError("Email address is already in use");
         setIsLoading(false);
@@ -96,6 +96,7 @@ const Register = () => {
           DonorType,
           AccountCreate
         };
+        // send data to the firebase
 
         await setDoc(setdata, newData);
         console.log("Account created successfully, and data saved to Firestore");
@@ -141,7 +142,7 @@ const Register = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // You can add additional form submission logic here
+    
   };
 
   return (
