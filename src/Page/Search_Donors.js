@@ -21,6 +21,9 @@ import Nav_Bar from './Nav_Bar';
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const male_image = "https://cdn-icons-png.flaticon.com/512/6997/6997674.png";
+const female_image = "https://cdn-icons-png.flaticon.com/512/6997/6997662.png";
+
 const bangladeshLocations = [
   "Bagerhat", "Bandarban", "Barguna", "Barishal", "Bhola", "Bogura", "Brahmanbaria",
   "Chandpur", "Chapai Nawabganj", "Chattogram", "Chuadanga", "Comilla", "Cox's Bazar",
@@ -170,90 +173,86 @@ const Search_Donors = () => {
         <Grid container spacing={2} style={{ display: isLoading ? 'none' : 'flex' }}>
           {items.map((item, index) => (
             <Grow in={true} key={index} timeout={500}>
-
-
-<Grid item xs={12} sm={6} md={4} lg={3}>
-  <Card
-    onMouseEnter={() => setIsHovered(index)}
-    onMouseLeave={() => setIsHovered(null)}
-    variant="elevation" // Change to "outlined" for a softer look
-    elevation={isHovered === index ? 8 : 2}
-    style={{
-      backgroundColor: isHovered === index ? '#f0f0f0' : 'white',
-      transition: 'background-color 0.3s',
-      borderRadius: '12px',
-      overflow: 'hidden',
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)', // Add box shadow for depth
-    }}
-  >
-    <div
-      style={{
-        background: `url(${item.ProfileImage || (item.Gender === 'Male' ? 'https://static.vecteezy.com/system/resources/thumbnails/004/511/281/small/default-avatar-photo-placeholder-profile-picture-vector.jpg' : 'https://cdn4.vectorstock.com/i/1000x1000/14/18/default-female-avatar-profile-picture-icon-grey-vector-34511418.jpg')})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        width: '200px', // Adjust the width and height for a full round look
-        height: '200px',
-        borderRadius: '50%', // Make the image round
-        border: '2px solid #fff', // Add a border for a cleaner look
-      }}
-    ></div>
-    <div style={{ padding: '20px' }}>
-      <Typography
-        variant="h5"
-        color="primary"
-        style={{ textAlign: 'center', fontSize: '1.5rem' }}
-      >
-        {item.Name}
-      </Typography>
-      <Typography
-        variant="body2"
-        color="textSecondary"
-        style={{ textAlign: 'center', fontSize: '1.2rem' }}
-      >
-        Gender: {item.Gender}
-      </Typography>
-      <Typography
-        variant="body2"
-        color="textSecondary"
-        style={{ textAlign: 'center', fontSize: '1.2rem' }}
-      >
-        Location: {item.Location}
-      </Typography>
-      <Typography
-        variant="body2"
-        color="textSecondary"
-        style={{ textAlign: 'center', fontSize: '1.2rem' }}
-      >
-        Phone: {item.Phone}
-      </Typography>
-      <Typography
-        variant="h6"
-        color="secondary"
-        style={{ textAlign: 'center', fontSize: '1.5rem', margin: '10px' }}
-      >
-        {item.BloodGroup}
-      </Typography>
-    </div>
-  </Card>
-</Grid>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <Card
+                  className={`relative w-full h-200 bg-cover bg-center card-image`}
+                  onMouseEnter={() => setIsHovered(index)}
+                  onMouseLeave={() => setIsHovered(null)}
+                  variant="outlined"
+                  elevation={isHovered === index ? 8 : 2}
+                  style={{
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                    transition: 'background-color 0.3s ease-in-out, transform 0.3s ease-in-out',
+                    transform: isHovered === index ? 'scale(1.05)' : 'scale(1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '300px',
+                      height: '300px',
+                      borderRadius: '50%',
+                      border: '2px solid #fff',
+                      display: 'flex', // Center the image horizontally
+                      alignItems: 'center', // Center the image vertically
+                    }}
+                  >
+                    <img
+                      src={item.ProfileImage || (item.Gender === 'Male' ? male_image : female_image)}
+                      alt="Profile"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        objectPosition: 'center center',
+                        borderRadius: '50%',
+                      }}
+                    />
+                  </div>
+                  <div style={{ padding: '20px' }}>
+                    <Typography
+                      variant="h5"
+                      color="primary"
+                      style={{ textAlign: 'center', fontSize: '1.5rem' }}
+                    >
+                      {item.Name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      style={{ textAlign: 'center', fontSize: '1.2rem' }}
+                    >
+                      Gender: {item.Gender}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      style={{ textAlign: 'center', fontSize: '1.2rem' }}
+                    >
+                      Location: {item.Location}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      style={{ textAlign: 'center', fontSize: '1.2rem' }}
+                    >
+                      Phone: {item.Phone}
+                    </Typography>
+                    <Typography
+                      variant="h6"
+                      color="secondary"
+                      style={{ textAlign: 'center', fontSize: '1.5rem', margin: '10px' }}
+                    >
+                      {item.BloodGroup}
+                    </Typography>
+                  </div>
+                </Card>
+              </Grid>
             </Grow>
           ))}
         </Grid>
