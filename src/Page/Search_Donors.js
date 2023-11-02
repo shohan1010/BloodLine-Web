@@ -3,6 +3,9 @@ import { Autocomplete, TextField, Button, Avatar } from '@mui/material';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import { ClipLoader } from 'react-spinners';
+import IconButton from '@mui/material/IconButton';
+import FileCopyIcon from '@mui/icons-material/FileCopy'; // Import the copy icon
+import copy from 'clipboard-copy';
 import {
   Card,
   CardContent,
@@ -41,9 +44,29 @@ const Search_Donors = () => {
   const [items, setItems] = useState([]);
   const [filters, setFilters] = useState({
     BloodGroup: '',
-    Location: [], // Use an array to store selected locations
+    Location: [],
     DonorType: '',
   });
+
+  // Store the copied state for each item
+  const [copiedStates, setCopiedStates] = useState([]);
+
+  // Function to handle copying the phone number
+  const handleCopyClick = (phone, index) => {
+    copy(phone)
+      .then(() => {
+        // Create a new array with false values
+        const newCopiedStates = new Array(items.length).fill(false);
+        // Set the current index to true to mark it as copied
+        newCopiedStates[index] = true;
+        setCopiedStates(newCopiedStates);
+        // alert('Phone number copied to clipboard');
+      })
+      .catch((error) => {
+        console.error('Copy failed:', error);
+        alert('Copy failed. You can manually copy the phone number.');
+      });
+  };
 
   const [isHovered, setIsHovered] = useState(null);
   const [isLoading, setLoading] = useState(false);
@@ -60,19 +83,16 @@ const Search_Donors = () => {
       if (filters.BloodGroup) {
         q = query(q, where('BloodGroup', '==', filters.BloodGroup));
       }
-      if (filters.Location.length > 0) { // Check if locations are selected
+      if (filters.Location.length > 0) {
         q = query(q, where('Location', 'in', filters.Location));
       }
-      {
 
-        if (filters.DonorType) {
-          if (filters.DonorType !== 'All') {
-            q = query(q, where('DonorType', '==', filters.DonorType));
-          } else {
-            console.log("DonorType is 'All");
-          }
+      if (filters.DonorType) {
+        if (filters.DonorType !== 'All') {
+          q = query(q, where('DonorType', '==', filters.DonorType));
+        } else {
+          console.log("DonorType is 'All");
         }
-
       }
 
       const querySnapshot = await getDocs(q);
@@ -83,6 +103,7 @@ const Search_Donors = () => {
       });
 
       setItems(users);
+      setCopiedStates(Array(users.length).fill(false)); // Initialize copiedStates for each item
     } catch (error) {
       console.error('Error searching for users:', error);
     } finally {
@@ -155,7 +176,6 @@ const Search_Donors = () => {
         </Button>
       </div>
 
-      {/* Preloading code */}
       {isLoading && (
         <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
           <ClipLoader
@@ -167,7 +187,6 @@ const Search_Donors = () => {
           />
         </div>
       )}
-      {/* Preloading code */}
 
       <div className=' mt-20 pl-10 pr-10'>
         <Grid container spacing={2} style={{ display: isLoading ? 'none' : 'flex' }}>
@@ -198,8 +217,8 @@ const Search_Donors = () => {
                       height: '300px',
                       borderRadius: '50%',
                       border: '2px solid #fff',
-                      display: 'flex', // Center the image horizontally
-                      alignItems: 'center', // Center the image vertically
+                      display: 'flex',
+                      alignItems: 'center',
                     }}
                   >
                     <img
@@ -242,6 +261,13 @@ const Search_Donors = () => {
                       style={{ textAlign: 'center', fontSize: '1.2rem' }}
                     >
                       Phone: {item.Phone}
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleCopyClick(item.Phone, index)}
+                      >
+                        <FileCopyIcon />
+                      </IconButton>
+                      {copiedStates[index] && <span style={{ color: 'green', marginLeft: '10px' }}>Copied!</span>}
                     </Typography>
                     <Typography
                       variant="h6"
