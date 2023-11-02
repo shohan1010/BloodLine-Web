@@ -13,7 +13,6 @@ const History = () => {
   const [userData, setUserData] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [isHovered, setIsHovered] = useState(null);
-  const [deletedStates, setDeletedStates] = useState([]);
 
   useEffect(() => {
     const app = initializeApp(firebaseConfig);
@@ -46,7 +45,7 @@ const History = () => {
     });
   }, []);
 
-  const handleDelete = async (documentId, index) => {
+  const handleDelete = async (documentId) => {
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const userDocRef = doc(db, 'show data', userEmail);
@@ -60,11 +59,6 @@ const History = () => {
         // Firebase Firestore delete collection
         await deleteDoc(doc(subcollectionRef, documentId));
         setUserData((prevUserData) => prevUserData.filter((doc) => doc.id !== documentId));
-
-        // Mark the item as deleted
-        const newDeletedStates = [...deletedStates];
-        newDeletedStates[index] = true;
-        setDeletedStates(newDeletedStates);
       } catch (error) {
         console.error('Error deleting document:', error);
       }
@@ -105,7 +99,6 @@ const History = () => {
                     transform: isHovered === index ? 'scale(1.05)' : 'scale(1)',
                   }}
                 >
-
                   <div style={{ padding: '20px' }}>
                     <Typography
                       variant="h5"
@@ -142,15 +135,17 @@ const History = () => {
                     >
                       {user.BloodGroup}
                     </Typography>
-
                   </div>
                   <IconButton
                     color="primary"
-                    onClick={() => handleDelete(user.id, index)}
+                    onClick={() => handleDelete(user.id)}
                     style={{
                       position: 'absolute',
-                      bottom: '10px', // Adjust the top position as needed
-                      right: '10px', // Adjust the right position as needed
+                      bottom: '10px',
+                      right: '10px',
+                      transition: 'transform 0.3s, opacity 0.3s',
+                      transform: isHovered === index ? 'scale(1.05)' : 'scale(1)',
+                      opacity: isHovered === index ? 1 : 0,
                     }}
                   >
                     <DeleteIcon />
