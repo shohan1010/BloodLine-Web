@@ -30,9 +30,9 @@ const Nav_Bar = () => {
     setAnchorEl(null); // Close the menu
   };
   
-  const handleHistory =() => {
+  const handleProfile =() => {
 
-    history.push('/History');
+    history.push('/Profile');
     handleClose();
   
   }
@@ -105,8 +105,8 @@ const Nav_Bar = () => {
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
                   >
-                    <MenuItem >Profile</MenuItem>
-                    <MenuItem onClick={handleHistory}>History</MenuItem>
+                    <MenuItem onClick={handleProfile} >Profile</MenuItem>
+                    {/* <MenuItem onClick={handleHistory}>History</MenuItem> */}
                     <MenuItem onClick={handleLogout}>Log Out</MenuItem>
                   </Menu>
                 </div>

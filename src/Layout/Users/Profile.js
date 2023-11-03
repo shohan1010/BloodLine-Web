@@ -7,6 +7,7 @@ import Nav_Bar from '../Welcome/Nav_Bar';
 import { ClipLoader } from 'react-spinners';
 import { Card, CardContent, Grid, Grow, IconButton, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Nav_Bar_Users from './Nav_Bar_Users';
 
 const Profile = () => {
   const [userEmail, setUserEmail] = useState('');
@@ -67,7 +68,7 @@ const Profile = () => {
 
   return (
     <div>
-      <Nav_Bar />
+      <Nav_Bar_Users />
       <h1 className='text-center mt-5'>Your Blood Request History</h1>
 
       {isLoading && (
