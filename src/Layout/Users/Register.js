@@ -10,14 +10,14 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import Nav_Bar from './Nav_Bar';
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from 'firebase/auth';
 import { doc, getFirestore, setDoc } from 'firebase/firestore';
-import firebaseConfig from './firebaseConfig';
 import { FormControl, Typography } from '@mui/material';
 import { ClipLoader } from 'react-spinners';
 import { red } from '@mui/material/colors';
+import firebaseConfig from '../../Component/firebaseConfig';
+import Nav_Bar from '../Welcome/Nav_Bar';
 
 const BloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 

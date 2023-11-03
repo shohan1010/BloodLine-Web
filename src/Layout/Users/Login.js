@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Container, TextField, Button, Typography, Grid, IconButton } from '@mui/material';
-import Nav_Bar from './Nav_Bar';
 import GoogleIcon from '@mui/icons-material/Google';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
-import firebaseConfig from './firebaseConfig';
+import firebaseConfig from '../../Component/firebaseConfig';
+import Nav_Bar from '../Welcome/Nav_Bar';
 import { ClipLoader } from 'react-spinners';
 
 const Login = () => {

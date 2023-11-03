@@ -9,8 +9,8 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { collection, doc, getFirestore, setDoc } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
-import firebaseConfig from './firebaseConfig';
-import Nav_Bar from './Nav_Bar';
+import firebaseConfig from '../../Component/firebaseConfig';
+import Nav_Bar from '../Welcome/Nav_Bar';
 import { ClipLoader } from 'react-spinners';
 
 const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];

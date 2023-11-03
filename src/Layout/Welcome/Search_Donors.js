@@ -16,9 +16,8 @@ import {
 } from '@mui/material';
 
 // Firebase Configuration
-import firebaseConfig from './firebaseConfig';
-import { Navbar } from 'react-bootstrap';
-import Nav_Bar from './Nav_Bar';
+import firebaseConfig from '../../Component/firebaseConfig';
+import Nav_Bar from '../Welcome/Nav_Bar';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

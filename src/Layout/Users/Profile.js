@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import firebaseConfig from './firebaseConfig';
-import Nav_Bar from './Nav_Bar';
+import firebaseConfig from '../../Component/firebaseConfig';
+import Nav_Bar from '../Welcome/Nav_Bar';
 import { ClipLoader } from 'react-spinners';
 import { Card, CardContent, Grid, Grow, IconButton, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const History = () => {
+const Profile = () => {
   const [userEmail, setUserEmail] = useState('');
   const [userData, setUserData] = useState([]);
   const [isLoading, setLoading] = useState(false);
@@ -160,4 +160,4 @@ const History = () => {
   );
 };
 
-export default History;
+export default Profile;

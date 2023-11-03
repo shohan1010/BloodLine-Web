@@ -1,5 +1,5 @@
 import React from 'react';
-import Nav_Bar from './Nav_Bar';
+import Nav_Bar from '../Welcome/Nav_Bar';
 
 
 const About_Us = () => {

@@ -1,26 +1,21 @@
-import logo from './logo.svg';
 import './App.css';
-import Home from './Page/Home';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Blood_Request from './Page/Blood_Request';
-import Login from './Page/Login';
-import Register from './Page/Register';
-import Search_Donors from './Page/Search_Donors';
-import Error_404 from './Page/Error_404';
-import ProtectedRoute from './Component/ProtectedRoute';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import firebaseConfig from './Page/firebaseConfig';
 import { initializeApp } from 'firebase/app';
-import History from './Page/History';
-
-
-
-
-
-
-
+import Admin from './Layout/Admin/Admin';
+import Login from './Layout/Users/Login';
+import firebaseConfig from './Component/firebaseConfig';
+import Blood_Request from './Layout/Users/Blood_Request';
+import Profile from './Layout/Users/Profile';
+import Register from './Layout/Users/Register';
+import Search_Donors from './Layout/Welcome/Search_Donors';
+import Home from './Layout/Welcome/Home';
+import Error_404 from './Layout/Welcome/Error_404';
+import ProtectedRoute_User from './Layout/Users/ProtectedRoute_User';
+import ProtectedRoute_Admin from './Layout/Admin/ProtectedRoute_Admin';
+import Admin_login from './Layout/Admin/Admin_login';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -34,11 +29,9 @@ function App() {
   });
 
   useEffect(() => {
-
     initializeApp(firebaseConfig);
 
     const auth = getAuth();
-
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -62,40 +55,43 @@ function App() {
       <ThemeProvider theme={customTheme}>
         <Router>
           <Switch>
-
-          <Route path='/Login'>
+            <Route path='/Login'>
               <Login />
             </Route>
+            <Route path='/Admin_login'>
+              <Admin_login />
+            </Route>
 
+            {/* Admin Route */}
+            <ProtectedRoute_Admin
+              path="/admin"
+              component={Admin}
+              userRole={isAuthenticated ? 'admin' : 'guest'}
+              allowedRoles={['admin']}
+            />
 
-
-            // ProtectedRoute
-            <ProtectedRoute
+            {/* User Routes */}
+            <ProtectedRoute_User
               path="/Blood_Request"
               component={Blood_Request}
-              isAuthenticated={isAuthenticated}
+              userRole={isAuthenticated ? 'user' : 'guest'}
+              allowedRoles={['user']}
             />
-            <ProtectedRoute
-              path="/History"
-              component={History}
-              isAuthenticated={isAuthenticated}
+            <ProtectedRoute_User
+              path="/Profile"
+              component={Profile}
+              userRole={isAuthenticated ? 'user' : 'guest'}
+              allowedRoles={['user']}
             />
 
-
-            <ProtectedRoute
+            <ProtectedRoute_User
               path="/Register"
-              component={History}
-              isAuthenticated={!isAuthenticated}
+              component={Register}
+              userRole={isAuthenticated ? 'guest' : 'user'}
+              allowedRoles={['guest']}
             />
 
-            // Normal Route
-            
-            {/* <Route path='/Blood_Request'>
-              <Login />
-            </Route> */}
-            {/* <Route path='/Register'>
-              <Register />
-            </Route> */}
+            {/* Normal Route */}
             <Route path='/Search_Donors'>
               <Search_Donors />
             </Route>
@@ -103,6 +99,7 @@ function App() {
             <Route exact path='/'>
               <Home />
             </Route>
+
             <Route path='*'>
               <Error_404 />
             </Route>
