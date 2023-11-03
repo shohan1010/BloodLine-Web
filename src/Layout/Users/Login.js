@@ -6,6 +6,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPasswor
 import firebaseConfig from '../../Component/firebaseConfig';
 import Nav_Bar from '../Welcome/Nav_Bar';
 import { ClipLoader } from 'react-spinners';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -13,6 +14,7 @@ const Login = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false); 
+  const history = useHistory();
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth();
@@ -42,6 +44,9 @@ const Login = () => {
         setUser(user);
         setError(null);
         setIsLoading(false);
+        // history.push is to go to that location page
+        const from = history.location.state ? history.location.state.from : { pathname: '/' };
+        history.push(from);
       })
       .catch((error) => {
         setError(error.message);
@@ -63,6 +68,10 @@ const Login = () => {
         setUser(user);
         setError(null);
         setIsLoading(false); 
+        // history.push is to go to that location page
+        const from = history.location.state ? history.location.state.from : { pathname: '/' };
+        history.push(from);
+        
       })
       .catch((error) => {
         setError(error.message);
@@ -76,6 +85,9 @@ const Login = () => {
       .then(() => {
         setUser(null);
         setIsLoading(false); 
+        // history.push is to go to that location page
+        const from = history.location.state ? history.location.state.from : { pathname: '/' };
+        history.push(from);
       })
       .catch((error) => {
         setError(error.message);

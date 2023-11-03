@@ -55,9 +55,7 @@ function App() {
       <ThemeProvider theme={customTheme}>
         <Router>
           <Switch>
-            <Route path='/Login'>
-              <Login />
-            </Route>
+            
             <Route path='/Admin_login'>
               <Admin_login />
             </Route>
@@ -87,9 +85,19 @@ function App() {
             <ProtectedRoute_User
               path="/Register"
               component={Register}
-              userRole={isAuthenticated ? 'guest' : 'user'}
+              userRole={!isAuthenticated ? 'guest' : 'user'}
               allowedRoles={['guest']}
             />
+            <ProtectedRoute_User
+              path="/Login"
+              component={Login}
+              userRole={!isAuthenticated ? 'guest' : 'user'}
+              allowedRoles={['guest']}
+            />
+
+            
+
+
 
             {/* Normal Route */}
             <Route path='/Search_Donors'>
