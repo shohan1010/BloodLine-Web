@@ -13,25 +13,6 @@ const Home = () => {
 
   // const app = initializeApp(firebaseConfig);
 
-  const [user, setUser] = useState(null);
-
-  const auth = getAuth();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-        console.log("not authenticated");
-      }
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, [auth]);
-
   return (
 
 

@@ -47,14 +47,14 @@ function App() {
   if (isInitializing) {
     // Show a loader or loading indicator while initializing
     return <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-    <ClipLoader
-      color={'#d73636'}
-      loading={true}
-      size={150}
-      aria-label="Loading Spinner"
-      data-testid="loader"
-    />
-  </div>
+      <ClipLoader
+        color={'#d73636'}
+        loading={true}
+        size={150}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      />
+    </div>
   }
 
   return (
@@ -64,8 +64,7 @@ function App() {
           <Route path="/" element={<Home />} />
 
           <Route path="/Search_Donors" element={<Search_Donors />} />
-          <Route path="/Login" element={<Login />} />
-          <Route path="/Register" element={<Register />} />
+          
 
           {/* ProtectedRoute for Users */}
           <Route
@@ -92,8 +91,36 @@ function App() {
             }
           />
 
+          <Route
+            path="/Login"
+            element={
+              !isAuthenticated ? (
+                <Login />
+              ) : (
+                // Redirect to login if not authenticated
+                <Home />
+              )
+            }
+          />
+
+          <Route
+            path="/Register"
+            element={
+              !isAuthenticated ? (
+                <Register />
+              ) : (
+                // Redirect to login if not authenticated
+                
+                <Home />
+              )
+            }
+          />
+
           {/* Admin Routes */}
           <Route path="/Admin_login" element={<Admin_login />} />
+
+          {/* <Route path="/Login" element={<Login />} />
+          <Route path="/Register" element={<Register />} /> */}
 
           {/* Error 404 Route */}
           <Route path="*" element={<Error_404 />} />
