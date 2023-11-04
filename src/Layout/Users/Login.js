@@ -6,38 +6,36 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPasswor
 import firebaseConfig from '../../Component/firebaseConfig';
 import Nav_Bar from '../Welcome/Nav_Bar';
 import { ClipLoader } from 'react-spinners';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { Link, useLocation } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); 
-  const history = useHistory();
+  const [isLoading, setIsLoading] = useState(false);
+  const location = useLocation();
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth();
 
-  
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       setUser(user);
+  //       setError(null);
+  //     } else {
+  //       setUser(null);
+  //     }
+  //   });
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-        setError(null);
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
+  //   return () => unsubscribe();
+  // }, []);
 
   const provider = new GoogleAuthProvider();
 
   const handleGoogleSignIn = () => {
-    setIsLoading(true); 
+    setIsLoading(true);
     signInWithPopup(auth, provider)
       .then((result) => {
         const user = result.user;
@@ -45,8 +43,8 @@ const Login = () => {
         setError(null);
         setIsLoading(false);
         // history.push is to go to that location page
-        const from = history.location.state ? history.location.state.from : { pathname: '/' };
-        history.push(from);
+        const from = location.state?.from || '/';
+        location.navigate(from);
       })
       .catch((error) => {
         setError(error.message);
@@ -55,7 +53,7 @@ const Login = () => {
   };
 
   const handleEmailSignIn = () => {
-    setIsLoading(true); 
+    setIsLoading(true);
     if (!email || !password) {
       setError("Required fields are empty");
       setIsLoading(false);
@@ -67,31 +65,30 @@ const Login = () => {
         const user = userCredential.user;
         setUser(user);
         setError(null);
-        setIsLoading(false); 
+        setIsLoading(false);
         // history.push is to go to that location page
-        const from = history.location.state ? history.location.state.from : { pathname: '/' };
-        history.push(from);
-        
+        const from = location.state?.from || '/';
+        location.navigate(from);
       })
       .catch((error) => {
         setError(error.message);
-        setIsLoading(false); 
+        setIsLoading(false);
       });
   };
 
   const handleSignOut = () => {
-    setIsLoading(true); 
+    setIsLoading(true);
     signOut(auth)
       .then(() => {
         setUser(null);
-        setIsLoading(false); 
+        setIsLoading(false);
         // history.push is to go to that location page
-        const from = history.location.state ? history.location.state.from : { pathname: '/' };
-        history.push(from);
+        const from = location.state?.from || '/';
+        location.navigate(from);
       })
       .catch((error) => {
         setError(error.message);
-        setIsLoading(false); 
+        setIsLoading(false);
       });
   };
 
@@ -127,7 +124,7 @@ const Login = () => {
           ) : (
             <div>
               <Typography variant="h4" align="center">Login</Typography>
-             
+
               <TextField
                 fullWidth
                 label="Email or Phone Number"
@@ -171,8 +168,8 @@ const Login = () => {
               {error && <Typography variant="body1" color="error" marginLeft={10}>Username or Password is incorrect</Typography>}
               <div className="flex justify-end ">
                 <p>
-                  Don't have an account?<a href="/register" className="text-black hover:text-blue-500">  Register
-                  </a>
+                  Don't have an account?<Link to="/register" className="text-black hover:text-blue-500">  Register
+                  </Link>
                 </p>
               </div>
             </div>

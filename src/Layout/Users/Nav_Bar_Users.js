@@ -3,13 +3,13 @@ import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { Link, useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { useNavigate,Link, Navigate } from 'react-router-dom';
 
 const Nav_Bar_Users = () => {
   const [user, setUser] = useState(null);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const auth = getAuth();
-  const history = useHistory(); 
+  const history = useNavigate(); 
 
   // Function to set user session data
   const setUserSession = (userData) => {
@@ -32,7 +32,7 @@ const Nav_Bar_Users = () => {
   
   const handleProfile =() => {
 
-    history.push('/Profile');
+    Navigate('/Profile');
     handleClose();
   
   }

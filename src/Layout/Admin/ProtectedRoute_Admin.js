@@ -1,4 +1,4 @@
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Navigate } from 'react-router-dom';
 
 function ProtectedRoute_Admin({ component: Component, userRole, allowedRoles, ...rest }) {
   return (
@@ -8,7 +8,7 @@ function ProtectedRoute_Admin({ component: Component, userRole, allowedRoles, ..
         allowedRoles.includes(userRole) ? (
           <Component {...props} />
         ) : (
-          <Redirect to="/Admin_login" />
+          <Navigate to="/Admin_login" />
         )
       }
     />

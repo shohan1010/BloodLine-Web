@@ -1,11 +1,8 @@
 import './App.css';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
-import Admin from './Layout/Admin/Admin';
-import Login from './Layout/Users/Login';
 import firebaseConfig from './Component/firebaseConfig';
 import Blood_Request from './Layout/Users/Blood_Request';
 import Profile from './Layout/Users/Profile';
@@ -13,108 +10,96 @@ import Register from './Layout/Users/Register';
 import Search_Donors from './Layout/Welcome/Search_Donors';
 import Home from './Layout/Welcome/Home';
 import Error_404 from './Layout/Welcome/Error_404';
-import ProtectedRoute_User from './Layout/Users/ProtectedRoute_User';
-import ProtectedRoute_Admin from './Layout/Admin/ProtectedRoute_Admin';
 import Admin_login from './Layout/Admin/Admin_login';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Login from './Layout/Users/Login';
+import { ClipLoader } from 'react-spinners';
+
+const customTheme = createTheme({
+  palette: {
+    primary: {
+      main: '#c03c38',
+    },
+  },
+});
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
-  const customTheme = createTheme({
-    palette: {
-      primary: {
-        main: '#c03c38',
-      },
-    },
+  // Initialize Firebase outside the useEffect
+  initializeApp(firebaseConfig);
+  const auth = getAuth();
+
+  onAuthStateChanged(auth, (user) => {
+    setIsInitializing(false); // Authentication is initialized
+    if (user) {
+      // User is signed in
+      console.log('User is signed in');
+      setIsAuthenticated(true);
+    } else {
+      // User is signed out
+      console.log('User is signed out');
+      setIsAuthenticated(false);
+    }
   });
 
-  useEffect(() => {
-    initializeApp(firebaseConfig);
-
-    const auth = getAuth();
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in
-        console.log("User is signed in");
-        setIsAuthenticated(true);
-      } else {
-        // User is signed out
-        console.log("User is signed out")
-        setIsAuthenticated(false);
-      }
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  if (isInitializing) {
+    // Show a loader or loading indicator while initializing
+    return <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+    <ClipLoader
+      color={'#d73636'}
+      loading={true}
+      size={150}
+      aria-label="Loading Spinner"
+      data-testid="loader"
+    />
+  </div>
+  }
 
   return (
-    <div>
-      <ThemeProvider theme={customTheme}>
-        <Router>
-          <Switch>
-            
-            <Route path='/Admin_login'>
-              <Admin_login />
-            </Route>
+    <ThemeProvider theme={customTheme}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
 
-            {/* Admin Route */}
-            <ProtectedRoute_Admin
-              path="/admin"
-              component={Admin}
-              userRole={isAuthenticated ? 'admin' : 'guest'}
-              allowedRoles={['admin']}
-            />
+          <Route path="/Search_Donors" element={<Search_Donors />} />
+          <Route path="/Login" element={<Login />} />
+          <Route path="/Register" element={<Register />} />
 
-            {/* User Routes */}
-            <ProtectedRoute_User
-              path="/Blood_Request"
-              component={Blood_Request}
-              userRole={isAuthenticated ? 'user' : 'guest'}
-              allowedRoles={['user']}
-            />
-            <ProtectedRoute_User
-              path="/Profile"
-              component={Profile}
-              userRole={isAuthenticated ? 'user' : 'guest'}
-              allowedRoles={['user']}
-            />
+          {/* ProtectedRoute for Users */}
+          <Route
+            path="/Profile"
+            element={
+              isAuthenticated ? (
+                <Profile />
+              ) : (
+                // Redirect to login if not authenticated
+                <Login />
+              )
+            }
+          />
 
-            <ProtectedRoute_User
-              path="/Register"
-              component={Register}
-              userRole={!isAuthenticated ? 'guest' : 'user'}
-              allowedRoles={['guest']}
-            />
-            <ProtectedRoute_User
-              path="/Login"
-              component={Login}
-              userRole={!isAuthenticated ? 'guest' : 'user'}
-              allowedRoles={['guest']}
-            />
+          <Route
+            path="/Blood_Request"
+            element={
+              isAuthenticated ? (
+                <Blood_Request />
+              ) : (
+                // Redirect to login if not authenticated
+                <Login />
+              )
+            }
+          />
 
-            
+          {/* Admin Routes */}
+          <Route path="/Admin_login" element={<Admin_login />} />
 
-
-
-            {/* Normal Route */}
-            <Route path='/Search_Donors'>
-              <Search_Donors />
-            </Route>
-
-            <Route exact path='/'>
-              <Home />
-            </Route>
-
-            <Route path='*'>
-              <Error_404 />
-            </Route>
-          </Switch>
-        </Router>
-      </ThemeProvider>
-    </div>
+          {/* Error 404 Route */}
+          <Route path="*" element={<Error_404 />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
