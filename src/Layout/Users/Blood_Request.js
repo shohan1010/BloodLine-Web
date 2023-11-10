@@ -12,6 +12,7 @@ import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../../Component/firebaseConfig';
 import Nav_Bar from '../Welcome/Nav_Bar';
 import { ClipLoader } from 'react-spinners';
+import { Outlet } from 'react-router-dom';
 
 const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const bangladeshDistricts = [
@@ -101,6 +102,11 @@ const Blood_Request = () => {
   return (
     <div>
       <Nav_Bar></Nav_Bar>
+      <div className=' flex'>
+
+     
+
+      <div className='flex flex-col items-center mt-40 pl-28'><img src="https://i.ibb.co/GTSXSNK/download.png" alt="1" /></div>
 
       {isLoading && (
         <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
@@ -114,9 +120,9 @@ const Blood_Request = () => {
         </div>
      ) }
 
-      <Container maxWidth="xs" style={{ marginRight: '10%', display: isLoading ? 'none' : 'block' }}>
+      <Container maxWidth="xs" style={{ marginRight: '13%', display: isLoading ? 'none' : 'block' }}>
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={2} justifyContent="center" marginTop={15}>
+          <Grid container spacing={2} justifyContent="center" marginTop={25}>
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -202,6 +208,10 @@ const Blood_Request = () => {
           </Grid>
         </form>
       </Container>
+      </div>
+
+      
+      <Outlet/>
     </div>
   );
 };

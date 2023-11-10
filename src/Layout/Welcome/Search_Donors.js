@@ -23,8 +23,8 @@ import Nav_Bar from '../Welcome/Nav_Bar';
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const male_image = "https://cdn-icons-png.flaticon.com/512/6997/6997674.png";
-const female_image = "https://cdn-icons-png.flaticon.com/512/6997/6997662.png";
+const male_image = "https://i.ibb.co/sgKSfbM/6997674.png";
+const female_image = "https://i.ibb.co/16N59J2/6997662.png";
 
 const bangladeshLocations = [
   "Bagerhat", "Bandarban", "Barguna", "Barishal", "Bhola", "Bogura", "Brahmanbaria",
@@ -221,7 +221,7 @@ const Search_Donors = () => {
                     }}
                   >
                     <img
-                      src={item.ProfileImage || (item.Gender === 'Male' ? male_image : female_image)}
+                      src={item.ProfileImage}
                       alt="Profile"
                       style={{
                         width: '100%',

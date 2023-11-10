@@ -21,6 +21,9 @@ import Nav_Bar from '../Welcome/Nav_Bar';
 
 const BloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
+const male_image = "https://cdn-icons-png.flaticon.com/512/6997/6997674.png";
+const female_image = "https://cdn-icons-png.flaticon.com/512/6997/6997662.png";
+
 const bangladeshDistricts = [
   "Bagerhat", "Bandarban", "Barguna", "Barishal", "Bhola", "Bogura", "Brahmanbaria",
   "Chandpur", "Chapai Nawabganj", "Chattogram", "Chuadanga", "Comilla", "Cox's Bazar",
@@ -94,6 +97,7 @@ const Register = () => {
           DateOfBirth,
           Gender,
           DonorType,
+          ProfileImage: Gender === "Male" ? male_image : female_image,
           AccountCreate
         };
         // send data to the firebase

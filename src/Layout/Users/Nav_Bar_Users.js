@@ -77,7 +77,7 @@ const Nav_Bar_Users = () => {
     <div>
       <header className="#c03c38 text-white py-2 shadow-2xl">
         <div className="container mx-auto flex justify-between items-center">
-          <h1>Blood Donation</h1>
+        <Link to="/"> <h1>Blood Donation</h1> </Link>
           <nav>
             <ul className="list-none p-0 flex right-1">
               <li className="inline-block mx-4">

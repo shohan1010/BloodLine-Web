@@ -11,7 +11,7 @@ import Search_Donors from './Layout/Welcome/Search_Donors';
 import Home from './Layout/Welcome/Home';
 import Error_404 from './Layout/Welcome/Error_404';
 import Admin_login from './Layout/Admin/Admin_login';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import Login from './Layout/Users/Login';
 import { ClipLoader } from 'react-spinners';
 
@@ -27,7 +27,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
 
-  // Initialize Firebase outside the useEffect
+  
   initializeApp(firebaseConfig);
   const auth = getAuth();
 
@@ -44,8 +44,8 @@ function App() {
     }
   });
 
+  // loading indicator while initializing
   if (isInitializing) {
-    // Show a loader or loading indicator while initializing
     return <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
       <ClipLoader
         color={'#d73636'}
@@ -64,7 +64,7 @@ function App() {
           <Route path="/" element={<Home />} />
 
           <Route path="/Search_Donors" element={<Search_Donors />} />
-          
+
 
           {/* ProtectedRoute for Users */}
           <Route
@@ -73,7 +73,7 @@ function App() {
               isAuthenticated ? (
                 <Profile />
               ) : (
-                // Redirect to login if not authenticated
+                
                 <Login />
               )
             }
@@ -83,13 +83,17 @@ function App() {
             path="/Blood_Request"
             element={
               isAuthenticated ? (
-                <Blood_Request />
+                <Outlet/>
               ) : (
-                // Redirect to login if not authenticated
+                
                 <Login />
               )
             }
-          />
+          >
+
+            <Route index element={<Blood_Request/>} />
+            <Route path='Dashboad' element={<h1>THis is second child</h1>} />
+          </Route>
 
           <Route
             path="/Login"
@@ -97,7 +101,7 @@ function App() {
               !isAuthenticated ? (
                 <Login />
               ) : (
-                // Redirect to login if not authenticated
+                
                 <Home />
               )
             }
@@ -109,18 +113,24 @@ function App() {
               !isAuthenticated ? (
                 <Register />
               ) : (
-                // Redirect to login if not authenticated
-                
+               
+
                 <Home />
               )
             }
           />
 
           {/* Admin Routes */}
-          <Route path="/Admin_login" element={<Admin_login />} />
+          <Route path="/Admin_login" element={<Outlet/>}>
+            <Route index element={<Admin_login/>} />
+            <Route path='Dashboad' element={<h1>THis is Dashboard</h1>} />
+           
 
-          {/* <Route path="/Login" element={<Login />} />
-          <Route path="/Register" element={<Register />} /> */}
+
+
+          </Route>
+
+          
 
           {/* Error 404 Route */}
           <Route path="*" element={<Error_404 />} />
