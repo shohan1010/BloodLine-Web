@@ -1,162 +1,286 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Autocomplete from '@mui/material/Autocomplete';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from 'firebase/auth';
+import { doc, getDoc, getFirestore, setDoc, updateDoc } from 'firebase/firestore';
+import { FormControl, Typography } from '@mui/material';
+import { ClipLoader } from 'react-spinners';
+import { red } from '@mui/material/colors';
 import firebaseConfig from '../../Component/firebaseConfig';
 import Nav_Bar from '../Welcome/Nav_Bar';
-import { ClipLoader } from 'react-spinners';
-import { Card, CardContent, Grid, Grow, IconButton, Typography } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Nav_Bar_Users from './Nav_Bar_Users';
+
+const BloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
+const male_image = "https://cdn-icons-png.flaticon.com/512/6997/6997674.png";
+const female_image = "https://cdn-icons-png.flaticon.com/512/6997/6997662.png";
+
+const bangladeshDistricts = [
+  "Bagerhat", "Bandarban", "Barguna", "Barishal", "Bhola", "Bogura", "Brahmanbaria",
+  "Chandpur", "Chapai Nawabganj", "Chattogram", "Chuadanga", "Comilla", "Cox's Bazar",
+  "Dhaka", "Dinajpur", "Faridpur", "Feni", "Gaibandha", "Gazipur", "Gopalganj", "Habiganj",
+  "Jamalpur", "Jessore (Jashore)", "Jhalokati", "Jhenaidah", "Joypurhat", "Khagrachari",
+  "Khulna", "Kishoreganj", "Kushtia", "Lakshmipur", "Lalmonirhat", "Madaripur", "Magura",
+  "Manikganj", "Meherpur", "Moulvibazar", "Munshiganj", "Mymensingh", "Naogaon", "Narail",
+  "Narayanganj", "Narsingdi", "Natore", "Netrokona", "Nilphamari", "Noakhali", "Pabna",
+  "Panchagarh", "Patuakhali", "Pirojpur", "Rajbari", "Rajshahi", "Rangamati", "Rangpur",
+  "Satkhira", "Shariatpur", "Sherpur", "Sirajganj", "Sunamganj", "Sylhet", "Tangail",
+  "Thakurgaon", "Other District"
+];
 
 const Profile = () => {
-  const [userEmail, setUserEmail] = useState('');
-  const [userData, setUserData] = useState([]);
-  const [isLoading, setLoading] = useState(false);
-  const [isHovered, setIsHovered] = useState(null);
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const [formData, setFormData] = useState({
+    Name: '',
+    Email: '',
+    Phone: '',
+    BloodGroup: '',
+    Location: '',
+    DateOfBirth: null,
+    Gender: '',
+    password: '',
+    Location: '',
+    DonorType: ''
+  });
+
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleUpdate = async () => {
+    setError(null);
+    // setIsLoading(true);
+
+    const { Email, password, Name, Phone, Location, DateOfBirth, Gender, BloodGroup, DonorType } = formData;
+
+
+
+
+    const AccountCreate = new Date();
+
+
+    const updatedata = doc(db, "User_Info", Email);
+    const newData = {
+      Name,
+      Email,
+      Phone,
+      BloodGroup,
+      Location,
+      DateOfBirth,
+      Gender,
+      DonorType,
+      ProfileImage: Gender === "Male" ? male_image : female_image,
+      AccountCreate
+    };
+    // send data to the firebase
+
+    await updateDoc(updatedata, newData);
+    console.log("successfully update data saved to Firestore");
+    window.location.href = "/";
+
+
+  };
+
+  const handleChange = (event, newValue, field) => {
+    setFormData({
+      ...formData,
+      [field]: newValue,
+    });
+  };
+
+  const handleGenderChange = (event) => {
+    setFormData({
+      ...formData,
+      Gender: event.target.value,
+    });
+  };
+  const handleEligibleChange = (event) => {
+    setFormData({
+      ...formData,
+      DonorType: event.target.value,
+    });
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    setFormData({
+      ...formData,
+      DateOfBirth: date,
+    });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+  };
 
   useEffect(() => {
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const currentUserEmail = user.email;
-        const userDocRef = doc(db, 'show data', currentUserEmail);
-        const subcollectionRef = collection(userDocRef, 'Blood Request');
-
-        try {
-          const querySnapshot = await getDocs(subcollectionRef);
-          const userData = [];
-
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            userData.push({ ...data, id: doc.id });
-          });
-
-          setUserEmail(currentUserEmail);
-          setUserData(userData);
-        } catch (error) {
-          console.error('Error getting subcollection data:', error);
-        }
-      } else {
-        console.log('No user is currently authenticated');
-      }
-    });
-  }, []);
-
-  const handleDelete = async (documentId) => {
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const userDocRef = doc(db, 'show data', userEmail);
-    const subcollectionRef = collection(userDocRef, 'Blood Request');
-
-    // Display a confirmation dialog to check if the user wants to delete or not
-    const isConfirmed = window.confirm('Are you sure you want to delete this Blood Request?');
-
-    if (isConfirmed) {
+    setIsLoading(true);
+    const fetchUserData = async () => {
       try {
-        // Firebase Firestore delete collection
-        await deleteDoc(doc(subcollectionRef, documentId));
-        setUserData((prevUserData) => prevUserData.filter((doc) => doc.id !== documentId));
+        const user = auth.currentUser;
+        if (user) {
+          const userRef = doc(db, 'User_Info', user.email);
+          const docSnap = await getDoc(userRef);
+          
+            const userData = docSnap.data();
+            setFormData((prevData) => ({
+              ...prevData,
+              Name: userData.Name || 'N/A',
+              Email: userData.Email || 'N/A',
+              Phone: userData.Phone || 'N/A',
+              BloodGroup: userData.BloodGroup || 'N/A',
+              Location: userData.Location || 'N/A',
+              DateOfBirth: userData.DateOfBirth || null,
+              Gender: userData.Gender || 'N/A',
+              DonorType: userData.DonorType || 'N/A'
+            }));
+            setSelectedDate(userData.DateOfBirth || null);
+            setIsLoading(false);
+          }
+        
       } catch (error) {
-        console.error('Error deleting document:', error);
+        console.error('Error fetching user data:', error);
       }
-    }
-  };
+    };
+
+    fetchUserData();
+  }, [auth, db]);
 
   return (
     <div>
-      <Nav_Bar_Users />
-      <h1 className='text-center mt-5'>Your Blood Request History</h1>
+      <Nav_Bar />
 
+      {/* Preloading code */}
       {isLoading && (
         <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-          <ClipLoader color={'#d73636'} loading={true} size={150} aria-label="Loading Spinner" data-testid="loader" />
+          <ClipLoader
+            color={'#d73636'}
+            loading={true}
+            size={150}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
         </div>
       )}
 
-      <div className='mt-20 pl-3 pr-3'>
-        <Grid container spacing={2} style={{ display: isLoading ? 'none' : 'flex' }}>
-          {userData.map((user, index) => (
-            <Grow in={true} key={index} timeout={500}>
-              <Grid item xs={12} sm={6} md={4}>
-                <Card
-                  className={`relative w-full h-200 bg-cover bg-center card-image`}
-                  onMouseEnter={() => setIsHovered(index)}
-                  onMouseLeave={() => setIsHovered(null)}
-                  variant="outlined"
-                  elevation={isHovered === index ? 8 : 2}
-                  style={{
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                    transition: 'background-color 0.3s ease-in-out, transform 0.3s ease-in-out',
-                    transform: isHovered === index ? 'scale(1.05)' : 'scale(1)',
-                  }}
-                >
-                  <div style={{ padding: '20px' }}>
-                    <Typography
-                      variant="h5"
-                      color="primary"
-                      style={{ textAlign: 'center', fontSize: '1.5rem' }}
-                    >
-                      {user.Name}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      style={{ textAlign: 'center', fontSize: '1.2rem' }}
-                    >
-                      Gender: {user.Gender}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      style={{ textAlign: 'center', fontSize: '1.2rem' }}
-                    >
-                      Location: {user.Location}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      style={{ textAlign: 'center', fontSize: '1.2rem' }}
-                    >
-                      Phone: {user.Phone}
-                    </Typography>
-                    <Typography
-                      variant="h6"
-                      color="secondary"
-                      style={{ textAlign: 'center', fontSize: '1.5rem', margin: '10px' }}
-                    >
-                      {user.BloodGroup}
-                    </Typography>
-                  </div>
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleDelete(user.id)}
-                    style={{
-                      position: 'absolute',
-                      bottom: '10px',
-                      right: '10px',
-                      transition: 'transform 0.3s, opacity 0.3s',
-                      transform: isHovered === index ? 'scale(1.05)' : 'scale(1)',
-                      opacity: isHovered === index ? 1 : 0,
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Card>
-              </Grid>
-            </Grow>
-          ))}
-        </Grid>
-      </div>
+      <Container maxWidth="xs" spacing={2} style={{ display: isLoading ? 'none' : 'block' }}>
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={2} justifyContent="center" marginTop={15}>
+            {error && (
+              <Typography variant="body1" color="error" >
+                {error}
+              </Typography>
+            )}
+            {!isLoading && (
+
+
+
+
+              <>
+
+                
+
+
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Name"
+                        value={formData.Name}
+                        onChange={(event) => handleChange(event, event.target.value, 'Name')}
+                        required
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Phone"
+                        value={formData.Phone}
+                        onChange={(event) => handleChange(event, event.target.value, 'Phone')}
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <FormControl fullWidth required>
+                        <Autocomplete
+                          options={BloodGroups}
+                          renderInput={(params) => <TextField {...params} label="Blood Group" />}
+                          value={formData.BloodGroup}
+                          onChange={(_, newValue) => handleChange(_, newValue, 'BloodGroup')}
+                        />
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Autocomplete
+                        options={bangladeshDistricts}
+                        renderInput={(params) => <TextField {...params} fullWidth label="Location" />}
+                        value={formData.Location}
+                        onChange={(_, newValue) => handleChange(_, newValue, 'Location')}
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <DatePicker
+                          value={selectedDate}
+                          onChange={handleDateChange}
+                          renderInput={(params) => <TextField {...params} fullWidth label="Date of Birth" />}
+                          maxDate={new Date()}
+                          required
+                        />
+                      </LocalizationProvider>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <RadioGroup value={formData.Gender} onChange={handleGenderChange} row>
+                        <FormControlLabel value="Male" control={<Radio />} label="Male" />
+                        <FormControlLabel value="Female" control={<Radio />} label="Female" />
+                      </RadioGroup>
+                    </Grid>
+                    {/* <Grid item xs={12}>
+                  <h2 className=' mb-1'>Are You Eligible For Donate Blood?</h2>
+                  <RadioGroup value={formData.DonorType} onChange={handleEligibleChange} row>
+                    <FormControlLabel value="Eligible" control={<Radio />} label="Yes" />
+                    <FormControlLabel value="Not Eligible" control={<Radio />} label="No" />
+                  </RadioGroup>
+                </Grid> */}
+                    <Grid item xs={12}>
+                      <Button type="button" variant="contained" color="primary" onClick={handleUpdate} style={
+                        {
+                          backgroundColor: 'primary',
+                          color: 'white',
+                          fontSize: '15px',
+                          marginTop: '100px',
+                          padding: '15px 30px'
+                        }}>
+                        Update
+                      </Button>
+                    </Grid>
+                  
+                  
+
+              </>
+
+            )}
+
+          </Grid>
+        </form>
+
+      </Container>
+
     </div>
   );
 };

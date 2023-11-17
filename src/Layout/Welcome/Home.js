@@ -11,7 +11,6 @@ const Home = () => {
     alert("Thank you for your willingness to donate blood. Your contribution can save lives!");
   }
 
-  // const app = initializeApp(firebaseConfig);
 
   return (
 
@@ -19,10 +18,10 @@ const Home = () => {
 
     <div className="bg-gray-100 text-gray-800 font-sans">
 
-    {/* Use bg gradient for visual interest */}
+    
     <Nav_Bar></Nav_Bar>
   
-    {/* Add max-w-7xl mx-auto for better content wrapping */}
+    
     <section className="p-8 m-4 bg-white rounded-md shadow-lg max-w-7xl mx-auto flex">
   <div className="p-16 text-left" style={{ flex: '2' }}>
     <Typography variant="h2" className="text-4xl font-bold">Welcome to our<br />Blood Donation</Typography>
@@ -51,14 +50,14 @@ const Home = () => {
 
 
   
-    {/* Use grid for responsive layout */}
+  
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto">
   
-      {/* Display testimonials */}
+      
       <section className="p-8 bg-white rounded-md shadow-lg">
         <Typography variant="h4">Donor Testimonials</Typography>
   
-        {/* Show testimonial */}
+       
         <blockquote className="italic mt-4">
           "Donating blood through this organization was a great experience. I felt safe and the staff was friendly and professional."
         </blockquote>
@@ -66,11 +65,11 @@ const Home = () => {
   
       </section>
   
-      {/* Section for facts, stats */}
+      
       <section className="p-8 bg-white rounded-md shadow-lg">
         <Typography variant="h4">Our Impact</Typography>
         
-        {/* Stats */}
+        
         <p className="mt-4 text-2xl font-semibold">5,000</p>
         <p className="text-gray-500">Lives saved last year</p>
   
@@ -79,10 +78,10 @@ const Home = () => {
     </div>
     
   
-    {/* Visual divider */}
+   
     <div className="bg-red-600 h-1 mx-auto max-w-xl my-12"></div>
   
-    {/* FAQ styling */}
+    
     <section className="max-w-3xl mx-auto p-8 bg-white rounded-md shadow-lg">
       <h2 className="text-xl font-semibold mb-6">Frequently Asked Questions</h2>
       

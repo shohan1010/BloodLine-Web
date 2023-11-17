@@ -37,6 +37,15 @@ const Nav_Bar_Users = () => {
   
   }
 
+  const handleHistory =() => {
+
+    Navigate('/History');
+    handleClose();
+  
+  }
+
+
+
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
@@ -106,7 +115,7 @@ const Nav_Bar_Users = () => {
                     onClose={handleClose}
                   >
                     <MenuItem onClick={handleProfile} >Profile</MenuItem>
-                    {/* <MenuItem onClick={handleHistory}>History</MenuItem> */}
+                    <MenuItem onClick={handleHistory}>History</MenuItem>
                     <MenuItem onClick={handleLogout}>Log Out</MenuItem>
                   </Menu>
                 </div>

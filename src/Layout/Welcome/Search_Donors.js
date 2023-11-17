@@ -4,18 +4,9 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import { ClipLoader } from 'react-spinners';
 import IconButton from '@mui/material/IconButton';
-import FileCopyIcon from '@mui/icons-material/FileCopy'; // Import the copy icon
+import FileCopyIcon from '@mui/icons-material/FileCopy';
 import copy from 'clipboard-copy';
-import {
-  Card,
-  CardContent,
-  CardActions,
-  Typography,
-  Grow,
-  Grid,
-} from '@mui/material';
-
-// Firebase Configuration
+import {Card,CardContent,CardActions,Typography,Grow,Grid,} from '@mui/material';
 import firebaseConfig from '../../Component/firebaseConfig';
 import Nav_Bar from '../Welcome/Nav_Bar';
 
@@ -23,8 +14,7 @@ import Nav_Bar from '../Welcome/Nav_Bar';
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const male_image = "https://i.ibb.co/sgKSfbM/6997674.png";
-const female_image = "https://i.ibb.co/16N59J2/6997662.png";
+
 
 const bangladeshLocations = [
   "Bagerhat", "Bandarban", "Barguna", "Barishal", "Bhola", "Bogura", "Brahmanbaria",
@@ -50,16 +40,14 @@ const Search_Donors = () => {
   // Store the copied state for each item
   const [copiedStates, setCopiedStates] = useState([]);
 
-  // Function to handle copying the phone number
+  // handle copying the phone number
   const handleCopyClick = (phone, index) => {
     copy(phone)
       .then(() => {
-        // Create a new array with false values
         const newCopiedStates = new Array(items.length).fill(false);
-        // Set the current index to true to mark it as copied
         newCopiedStates[index] = true;
         setCopiedStates(newCopiedStates);
-        // alert('Phone number copied to clipboard');
+        
       })
       .catch((error) => {
         console.error('Copy failed:', error);

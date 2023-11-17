@@ -14,6 +14,7 @@ import Admin_login from './Layout/Admin/Admin_login';
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import Login from './Layout/Users/Login';
 import { ClipLoader } from 'react-spinners';
+import History from './Layout/Users/History';
 
 const customTheme = createTheme({
   palette: {
@@ -27,7 +28,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
 
-  
+
   initializeApp(firebaseConfig);
   const auth = getAuth();
 
@@ -73,7 +74,19 @@ function App() {
               isAuthenticated ? (
                 <Profile />
               ) : (
-                
+
+                <Login />
+              )
+            }
+          />
+
+          <Route
+            path="/History"
+            element={
+              isAuthenticated ? (
+                <History />
+              ) : (
+
                 <Login />
               )
             }
@@ -83,17 +96,16 @@ function App() {
             path="/Blood_Request"
             element={
               isAuthenticated ? (
-                <Outlet/>
+                <Blood_Request />
               ) : (
-                
+
                 <Login />
               )
             }
-          >
+          />
 
-            <Route index element={<Blood_Request/>} />
-            <Route path='Dashboad' element={<h1>THis is second child</h1>} />
-          </Route>
+
+
 
           <Route
             path="/Login"
@@ -101,7 +113,7 @@ function App() {
               !isAuthenticated ? (
                 <Login />
               ) : (
-                
+
                 <Home />
               )
             }
@@ -113,7 +125,7 @@ function App() {
               !isAuthenticated ? (
                 <Register />
               ) : (
-               
+
 
                 <Home />
               )
@@ -121,16 +133,17 @@ function App() {
           />
 
           {/* Admin Routes */}
-          <Route path="/Admin_login" element={<Outlet/>}>
-            <Route index element={<Admin_login/>} />
-            <Route path='Dashboad' element={<h1>THis is Dashboard</h1>} />
-           
+
+          <Route path="/Admin" element={<Outlet />}>
+            <Route index element={<Admin_login />} />
+            <Route path='Dashboad' element={<h1>THis is Dashboard Admin</h1>} />
+
 
 
 
           </Route>
 
-          
+
 
           {/* Error 404 Route */}
           <Route path="*" element={<Error_404 />} />
