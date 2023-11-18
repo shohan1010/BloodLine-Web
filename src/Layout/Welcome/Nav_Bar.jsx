@@ -3,21 +3,19 @@ import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { useNavigate,Link, Navigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Nav_Bar = () => {
   const [user, setUser] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const auth = getAuth();
-  const navagateto = useNavigate(); 
+  const navagateto = useNavigate();
 
-  // Function to set user session data
   const setUserSession = (userData) => {
     localStorage.setItem('userSession', JSON.stringify(userData));
     console.log("this is user data ", userData);
   };
 
-  // Function to clear user session data
   const clearUserSession = () => {
     localStorage.removeItem('userSession');
   };
@@ -27,29 +25,25 @@ const Nav_Bar = () => {
   };
 
   const handleClose = () => {
-    setAnchorEl(null); // Close the menu
+    setAnchorEl(null);
   };
-  
-  const handleProfile =() => {
 
+  const handleProfile = () => {
     navagateto('/Profile');
     handleClose();
-  
-  }
+  };
 
-  const handleHistory =() => {
-
+  const handleHistory = () => {
     navagateto('/History');
     handleClose();
-  
-  }
+  };
 
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
         setUser(null);
-        clearUserSession(); // Clear the user session on successful logout
-        handleClose(); // Close the menu after successful logout
+        clearUserSession();
+        handleClose();
       })
       .catch((error) => {
         console.error('Logout error:', error);
@@ -57,7 +51,6 @@ const Nav_Bar = () => {
   };
 
   useEffect(() => {
-    // Check if there's a user session in local storage
     const storedSession = localStorage.getItem('userSession');
     if (storedSession) {
       const userData = JSON.parse(storedSession);
@@ -67,18 +60,20 @@ const Nav_Bar = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        setUserSession(user); // Store the user session on login
+        setUserSession(user);
       } else {
         setUser(null);
-        clearUserSession(); // Clear the user session on logout
+        clearUserSession();
         console.log("User not authenticated");
       }
+    }, (error) => {
+      console.error('Auth state change error:', error);
     });
 
     return () => {
-      unsubscribe(); 
+      unsubscribe();
     };
-  }, []);
+  }, [auth, navagateto]);
 
   return (
     <div>

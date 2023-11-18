@@ -15,6 +15,7 @@ import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import Login from './Layout/Users/Login';
 import { ClipLoader } from 'react-spinners';
 import History from './Layout/Users/History';
+import Admin from './Layout/Admin/Admin';
 
 const customTheme = createTheme({
   palette: {
@@ -62,6 +63,7 @@ function App() {
     <ThemeProvider theme={customTheme}>
       <BrowserRouter>
         <Routes>
+          
           <Route path="/" element={<Home />} />
 
           <Route path="/Search_Donors" element={<Search_Donors />} />
@@ -135,7 +137,7 @@ function App() {
           {/* Admin Routes */}
 
           <Route path="/Admin" element={<Outlet />}>
-            <Route index element={<Admin_login />} />
+            <Route index element={<Admin />} />
             <Route path='Dashboad' element={<h1>THis is Dashboard Admin</h1>} />
 
 

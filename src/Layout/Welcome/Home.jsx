@@ -4,7 +4,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../../Component/firebaseConfig';
-import Nav_Bar from '../Welcome/Nav_Bar';
+import Nav_Bar from './Nav_Bar';
 
 const Home = () => {
   function donateNow() {

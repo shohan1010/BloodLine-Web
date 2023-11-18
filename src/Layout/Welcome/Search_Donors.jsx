@@ -6,9 +6,9 @@ import { ClipLoader } from 'react-spinners';
 import IconButton from '@mui/material/IconButton';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import copy from 'clipboard-copy';
-import {Card,CardContent,CardActions,Typography,Grow,Grid,} from '@mui/material';
+import { Card, CardContent, CardActions, Typography, Grow, Grid, } from '@mui/material';
 import firebaseConfig from '../../Component/firebaseConfig';
-import Nav_Bar from '../Welcome/Nav_Bar';
+import Nav_Bar from './Nav_Bar';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -37,23 +37,7 @@ const Search_Donors = () => {
     DonorType: '',
   });
 
-  // Store the copied state for each item
-  const [copiedStates, setCopiedStates] = useState([]);
 
-  // handle copying the phone number
-  const handleCopyClick = (phone, index) => {
-    copy(phone)
-      .then(() => {
-        const newCopiedStates = new Array(items.length).fill(false);
-        newCopiedStates[index] = true;
-        setCopiedStates(newCopiedStates);
-        
-      })
-      .catch((error) => {
-        console.error('Copy failed:', error);
-        alert('Copy failed. You can manually copy the phone number.');
-      });
-  };
 
   const [isHovered, setIsHovered] = useState(null);
   const [isLoading, setLoading] = useState(false);
@@ -90,7 +74,7 @@ const Search_Donors = () => {
       });
 
       setItems(users);
-      setCopiedStates(Array(users.length).fill(false)); // Initialize copiedStates for each item
+      
     } catch (error) {
       console.error('Error searching for users:', error);
     } finally {
@@ -105,6 +89,10 @@ const Search_Donors = () => {
 
   return (
     <div className=''>
+
+      <img src="../../Asset/img/as.png" alt="" />
+
+      
       <Nav_Bar></Nav_Bar>
       <div className="relative w-full pb-5/3 max-w-5xl mx-auto mt-32 flex flex-row items-center justify-center">
         <Autocomplete
@@ -242,20 +230,25 @@ const Search_Donors = () => {
                     >
                       Location: {item.Location}
                     </Typography>
+
+                      {/* Phone NO Show */}
                     <Typography
                       variant="body2"
                       color="textSecondary"
-                      style={{ textAlign: 'center', fontSize: '1.2rem' }}
+                      style={{ textAlign: 'center', fontSize: '1.2rem', cursor: 'pointer' }}
+                      onClick={() => window.location.href = `tel:${item.Phone}`}
                     >
                       Phone: {item.Phone}
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleCopyClick(item.Phone, index)}
-                      >
-                        <FileCopyIcon />
-                      </IconButton>
-                      {copiedStates[index] && <span style={{ color: 'green', marginLeft: '10px' }}>Copied!</span>}
                     </Typography>
+
+                    
+
+
+                      
+
+
+
+
                     <Typography
                       variant="h6"
                       color="secondary"

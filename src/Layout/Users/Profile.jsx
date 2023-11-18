@@ -18,11 +18,14 @@ import { ClipLoader } from 'react-spinners';
 import { red } from '@mui/material/colors';
 import firebaseConfig from '../../Component/firebaseConfig';
 import Nav_Bar from '../Welcome/Nav_Bar';
+import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 
 const BloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
 const male_image = "https://cdn-icons-png.flaticon.com/512/6997/6997674.png";
 const female_image = "https://cdn-icons-png.flaticon.com/512/6997/6997662.png";
+
+
 
 const bangladeshDistricts = [
   "Bagerhat", "Bandarban", "Barguna", "Barishal", "Bhola", "Bogura", "Brahmanbaria",
@@ -42,6 +45,9 @@ const Profile = () => {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  const [image, setImage] = useState(null);
 
   const [formData, setFormData] = useState({
     Name: '',
@@ -87,11 +93,31 @@ const Profile = () => {
     };
     // send data to the firebase
 
+    
+    if (image) {
+      const storageRef = ref(storage, `profileImages/${Email}.jpg`);
+      await uploadBytes(storageRef, image).then(async (snapshot) => {
+        const imageUrl = await getDownloadURL(snapshot.ref);
+        newData.ProfileImage = imageUrl; // Update user data with the image URL
+      }).catch((error) => {
+        console.error('Error uploading image:', error);
+      });
+    }
+
     await updateDoc(updatedata, newData);
     console.log("successfully update data saved to Firestore");
     window.location.href = "/";
+  };
 
-
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleChange = (event, newValue, field) => {
@@ -163,7 +189,6 @@ const Profile = () => {
   return (
     <div>
       <Nav_Bar />
-
       {/* Preloading code */}
       {isLoading && (
         <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
@@ -177,9 +202,38 @@ const Profile = () => {
         </div>
       )}
 
-      <Container maxWidth="xs" spacing={2} style={{ display: isLoading ? 'none' : 'block' }}>
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={2} justifyContent="center" marginTop={15}>
+        
+        <Container maxWidth="lg" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+
+
+
+
+ 
+        <div style={{ width: '30%', marginRight: '20px' }}>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageChange}
+        style={{ display: 'none' }}
+        id="profilePicInput"
+      />
+      <label htmlFor="profilePicInput" style={{ cursor: 'pointer' }}>
+        Choose Image
+      </label>
+      {image && (
+        <div style={{ marginTop: '10px' }}>
+          <img src={image} alt="Profile" style={{ maxWidth: '100%', height: 'auto' }} />
+        </div>
+      )}
+    </div>
+
+
+
+
+  {/* Form Section */}
+  <div style={{ width: '65%' }}>
+    <form onSubmit={handleSubmit}>
+    <Grid container spacing={2} justifyContent={"center"} marginTop={15}>
             {error && (
               <Typography variant="body1" color="error" >
                 {error}
@@ -191,6 +245,8 @@ const Profile = () => {
 
 
               <>
+
+              
 
                 
 
@@ -277,9 +333,10 @@ const Profile = () => {
             )}
 
           </Grid>
-        </form>
+    </form>
+  </div>
+</Container>
 
-      </Container>
 
     </div>
   );
