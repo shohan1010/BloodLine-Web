@@ -20,27 +20,14 @@ import firebaseConfig from '../../Component/firebaseConfig';
 import Nav_Bar from '../Welcome/Nav_Bar';
 import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import Compressor from "compressorjs";
-
-
-const BloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-
-const male_image = "https://cdn-icons-png.flaticon.com/512/6997/6997674.png";
-const female_image = "https://cdn-icons-png.flaticon.com/512/6997/6997662.png";
+import { compressImage } from './Component/All_Function';
+import { bangladeshDistricts,BloodGroups } from './Component/Data_query';
+import { male_image,female_image } from './Component/Data_query';
 
 
 
-const bangladeshDistricts = [
-  "Bagerhat", "Bandarban", "Barguna", "Barishal", "Bhola", "Bogura", "Brahmanbaria",
-  "Chandpur", "Chapai Nawabganj", "Chattogram", "Chuadanga", "Comilla", "Cox's Bazar",
-  "Dhaka", "Dinajpur", "Faridpur", "Feni", "Gaibandha", "Gazipur", "Gopalganj", "Habiganj",
-  "Jamalpur", "Jessore (Jashore)", "Jhalokati", "Jhenaidah", "Joypurhat", "Khagrachari",
-  "Khulna", "Kishoreganj", "Kushtia", "Lakshmipur", "Lalmonirhat", "Madaripur", "Magura",
-  "Manikganj", "Meherpur", "Moulvibazar", "Munshiganj", "Mymensingh", "Naogaon", "Narail",
-  "Narayanganj", "Narsingdi", "Natore", "Netrokona", "Nilphamari", "Noakhali", "Pabna",
-  "Panchagarh", "Patuakhali", "Pirojpur", "Rajbari", "Rajshahi", "Rangamati", "Rangpur",
-  "Satkhira", "Shariatpur", "Sherpur", "Sirajganj", "Sunamganj", "Sylhet", "Tangail",
-  "Thakurgaon", "Other District"
-];
+
+
 
 const Profile = () => {
   // Initialize Firebase
@@ -99,7 +86,7 @@ const Profile = () => {
 
     
     if (imageUpload) {
-      const storageRef = ref(storage, `profileImages/${Email}/profile.jpg`);
+      const storageRef = ref(storage, `profileImages/${Email}/profile.png`);
       await uploadBytes(storageRef, imageUpload).then(async (snapshot) => {
         const imageUrl = await getDownloadURL(snapshot.ref);
         newData.ProfileImage = imageUrl; // Update user data with the image URL
@@ -120,17 +107,7 @@ const Profile = () => {
       reader.onload = () => {
         setImage(reader.result);
         // setImageUpload(file);
-        new Compressor(file, {
-          quality: 0.4, // Adjust quality as needed (0.6 is an example)
-          maxWidth: 800, // Maximum width of the compressed image
-          maxHeight: 600, // Maximum height of the compressed image
-          success: (compressedResult) => {
-            setImageUpload(compressedResult);
-          },
-          error: (error) => {
-            console.error("Error compressing file:", error);
-          },
-        });
+        compressImage(file,setImageUpload)
 
       };
       reader.readAsDataURL(file);

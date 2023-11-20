@@ -18,24 +18,8 @@ import { ClipLoader } from 'react-spinners';
 import { red } from '@mui/material/colors';
 import firebaseConfig from '../../Component/firebaseConfig';
 import Nav_Bar from '../Welcome/Nav_Bar';
-
-const BloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-
-const male_image = "https://cdn-icons-png.flaticon.com/512/6997/6997674.png";
-const female_image = "https://cdn-icons-png.flaticon.com/512/6997/6997662.png";
-
-const bangladeshDistricts = [
-  "Bagerhat", "Bandarban", "Barguna", "Barishal", "Bhola", "Bogura", "Brahmanbaria",
-  "Chandpur", "Chapai Nawabganj", "Chattogram", "Chuadanga", "Comilla", "Cox's Bazar",
-  "Dhaka", "Dinajpur", "Faridpur", "Feni", "Gaibandha", "Gazipur", "Gopalganj", "Habiganj",
-  "Jamalpur", "Jessore (Jashore)", "Jhalokati", "Jhenaidah", "Joypurhat", "Khagrachari",
-  "Khulna", "Kishoreganj", "Kushtia", "Lakshmipur", "Lalmonirhat", "Madaripur", "Magura",
-  "Manikganj", "Meherpur", "Moulvibazar", "Munshiganj", "Mymensingh", "Naogaon", "Narail",
-  "Narayanganj", "Narsingdi", "Natore", "Netrokona", "Nilphamari", "Noakhali", "Pabna",
-  "Panchagarh", "Patuakhali", "Pirojpur", "Rajbari", "Rajshahi", "Rangamati", "Rangpur",
-  "Satkhira", "Shariatpur", "Sherpur", "Sirajganj", "Sunamganj", "Sylhet", "Tangail",
-  "Thakurgaon", "Other District"
-];
+import { bangladeshDistricts,BloodGroups } from './Component/Data_query';
+import { male_image,female_image } from './Component/Data_query';
 
 const Register = () => {
   // Initialize Firebase
