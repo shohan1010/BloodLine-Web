@@ -16,6 +16,7 @@ import Login from './Layout/Users/Login';
 import { ClipLoader } from 'react-spinners';
 import History from './Layout/Users/History';
 import Admin from './Layout/Admin/Admin';
+import Test1 from './Layout/Users/Test/Test1';
 
 const customTheme = createTheme({
   palette: {
@@ -65,6 +66,7 @@ function App() {
         <Routes>
           
           <Route path="/" element={<Home />} />
+          <Route path="/Test" element={<Test1 />} />
 
           <Route path="/Search_Donors" element={<Search_Donors />} />
 
