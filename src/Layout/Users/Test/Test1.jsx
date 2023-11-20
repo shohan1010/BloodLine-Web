@@ -1,14 +1,25 @@
 import React, { useState } from "react";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "./TestConsfig";
-// import { storage } from "../../../Component/firebaseConfig";
+import Compressor from "compressorjs";
 
 function Test1() {
   const [imageUpload, setImageUpload] = useState(null);
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    setImageUpload(selectedFile);
+    
+    new Compressor(selectedFile, {
+      quality: 0.6, // Adjust quality as needed (0.6 is an example)
+      maxWidth: 800, // Maximum width of the compressed image
+      maxHeight: 600, // Maximum height of the compressed image
+      success: (compressedResult) => {
+        setImageUpload(compressedResult);
+      },
+      error: (error) => {
+        console.error("Error compressing file:", error);
+      },
+    });
   };
 
   const uploadFile = () => {
