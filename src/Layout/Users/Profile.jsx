@@ -65,6 +65,8 @@ const Profile = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [imageUpload, setImageUpload] = useState(null);
+
 
   const handleUpdate = async () => {
     setError(null);
@@ -94,9 +96,9 @@ const Profile = () => {
     // send data to the firebase
 
     
-    if (image) {
-      const storageRef = ref(storage, `profileImages/${Email}.jpg`);
-      await uploadBytes(storageRef, image).then(async (snapshot) => {
+    if (imageUpload) {
+      const storageRef = ref(storage, `profileImages/${Email}/profile.jpg`);
+      await uploadBytes(storageRef, imageUpload).then(async (snapshot) => {
         const imageUrl = await getDownloadURL(snapshot.ref);
         newData.ProfileImage = imageUrl; // Update user data with the image URL
       }).catch((error) => {
@@ -115,6 +117,8 @@ const Profile = () => {
       const reader = new FileReader();
       reader.onload = () => {
         setImage(reader.result);
+        setImageUpload(file);
+
       };
       reader.readAsDataURL(file);
     }
