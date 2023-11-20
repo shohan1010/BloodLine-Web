@@ -10,7 +10,7 @@ function Test1() {
     const selectedFile = event.target.files[0];
     
     new Compressor(selectedFile, {
-      quality: 0.6, // Adjust quality as needed (0.6 is an example)
+      quality: 0.4, // Adjust quality as needed (0.6 is an example)
       maxWidth: 800, // Maximum width of the compressed image
       maxHeight: 600, // Maximum height of the compressed image
       success: (compressedResult) => {

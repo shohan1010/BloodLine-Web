@@ -19,6 +19,8 @@ import { red } from '@mui/material/colors';
 import firebaseConfig from '../../Component/firebaseConfig';
 import Nav_Bar from '../Welcome/Nav_Bar';
 import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
+import Compressor from "compressorjs";
+
 
 const BloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
@@ -117,7 +119,18 @@ const Profile = () => {
       const reader = new FileReader();
       reader.onload = () => {
         setImage(reader.result);
-        setImageUpload(file);
+        // setImageUpload(file);
+        new Compressor(file, {
+          quality: 0.4, // Adjust quality as needed (0.6 is an example)
+          maxWidth: 800, // Maximum width of the compressed image
+          maxHeight: 600, // Maximum height of the compressed image
+          success: (compressedResult) => {
+            setImageUpload(compressedResult);
+          },
+          error: (error) => {
+            console.error("Error compressing file:", error);
+          },
+        });
 
       };
       reader.readAsDataURL(file);
