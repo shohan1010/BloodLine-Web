@@ -1,6 +1,6 @@
 import './App.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from './Component/firebaseConfig';
@@ -29,126 +29,112 @@ const customTheme = createTheme({
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    const auth = getAuth();
+    initializeApp(firebaseConfig);
 
-  initializeApp(firebaseConfig);
-  const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (userAuth) => {
+      setIsInitializing(false);
 
-  onAuthStateChanged(auth, (user) => {
-    setIsInitializing(false); // Authentication is initialized
-    if (user) {
-      // User is signed in
-      console.log('User is signed in');
-      setIsAuthenticated(true);
-    } else {
-      // User is signed out
-      console.log('User is signed out');
-      setIsAuthenticated(false);
-    }
-  });
+      if (userAuth) {
+        console.log('User is signed in');
+        setIsAuthenticated(true);
+        setUser(userAuth);
+        localStorage.setItem('userSession', JSON.stringify(userAuth));
+      } else {
+        console.log('User is signed out');
+        setIsAuthenticated(false);
+        setUser(null);
+        localStorage.removeItem('userSession');
+      }
+    }, (error) => {
+      console.error('Auth state change error:', error);
+    });
 
-  // loading indicator while initializing
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   if (isInitializing) {
-    return <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-      <ClipLoader
-        color={'#d73636'}
-        loading={true}
-        size={150}
-        aria-label="Loading Spinner"
-        data-testid="loader"
-      />
-    </div>
+    return (
+      <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+        <ClipLoader
+          color={'#d73636'}
+          loading={true}
+          size={150}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+      </div>
+    );
   }
 
   return (
     <ThemeProvider theme={customTheme}>
       <BrowserRouter>
         <Routes>
-          
           <Route path="/" element={<Home />} />
           <Route path="/Test" element={<Test1 />} />
-
           <Route path="/Search_Donors" element={<Search_Donors />} />
-
-
-          {/* ProtectedRoute for Users */}
+          {/* Protected Routes for Users */}
           <Route
             path="/Profile"
             element={
               isAuthenticated ? (
                 <Profile />
               ) : (
-
                 <Login />
               )
             }
           />
-
           <Route
             path="/History"
             element={
               isAuthenticated ? (
                 <History />
               ) : (
-
                 <Login />
               )
             }
           />
-
           <Route
             path="/Blood_Request"
             element={
               isAuthenticated ? (
                 <Blood_Request />
               ) : (
-
                 <Login />
               )
             }
           />
-
-
-
-
           <Route
             path="/Login"
             element={
               !isAuthenticated ? (
                 <Login />
               ) : (
-
                 <Home />
               )
             }
           />
-
           <Route
             path="/Register"
             element={
               !isAuthenticated ? (
                 <Register />
               ) : (
-
-
                 <Home />
               )
             }
           />
-
           {/* Admin Routes */}
-
           <Route path="/Admin" element={<Outlet />}>
             <Route index element={<Admin />} />
-            <Route path='Dashboad' element={<h1>THis is Dashboard Admin</h1>} />
-
-
-
-
+            <Route path='Dashboad' element={<h1>This is Dashboard Admin</h1>} />
           </Route>
-
-
-
           {/* Error 404 Route */}
           <Route path="*" element={<Error_404 />} />
         </Routes>

@@ -38,6 +38,37 @@ const Profile = () => {
 
   const [image, setImage] = useState(null);
 
+  const styles = {
+    uploadLabel: {
+      cursor: 'pointer',
+      padding: '10px 15px',
+      border: '1px solid #ccc',
+      borderRadius: '5px',
+      backgroundColor: '#f0f0f0',
+      color: '#333',
+      display: 'inline-block',
+      textAlign: 'center',
+      transition: 'background-color 0.3s ease',
+      marginBottom: '10px',
+    },
+    imageContainer: {
+      marginTop: '10px',
+      borderRadius: '50%',
+      overflow: 'hidden',
+      width: '100px', // Adjust the size of the container
+      height: '100px', // Adjust the size of the container
+      border: '2px solid #ccc', // Add a border
+    },
+    profileImage: {
+      maxWidth: '100%',
+      height: 'auto',
+      borderRadius: '50%', // Make the image rounded
+      display: 'block',
+      objectFit: 'cover', // Maintain aspect ratio and cover the container
+    },
+  };
+  
+
   const [formData, setFormData] = useState({
     Name: '',
     Email: '',
@@ -55,6 +86,7 @@ const Profile = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [imageUpload, setImageUpload] = useState(null);
+  const [userData, setUserData] = useState({});
 
 
   const handleUpdate = async () => {
@@ -82,14 +114,15 @@ const Profile = () => {
       ProfileImage: Gender === "Male" ? male_image : female_image,
       AccountCreate
     };
+    
     // send data to the firebase
 
     
-    if (imageUpload) {
+    if (image) {
       const storageRef = ref(storage, `profileImages/${Email}/profile.png`);
-      await uploadBytes(storageRef, imageUpload).then(async (snapshot) => {
+      await uploadBytes(storageRef, image).then(async (snapshot) => {
         const imageUrl = await getDownloadURL(snapshot.ref);
-        newData.ProfileImage = imageUrl; // Update user data with the image URL
+        newData.ProfileImage = imageUrl;
       }).catch((error) => {
         console.error('Error uploading image:', error);
       });
@@ -147,38 +180,36 @@ const Profile = () => {
 
   };
 
-  useEffect(() => {
-    setIsLoading(true);
-    const fetchUserData = async () => {
-      try {
-        const user = auth.currentUser;
-        if (user) {
-          const userRef = doc(db, 'User_Info', user.email);
-          const docSnap = await getDoc(userRef);
-          
-            const userData = docSnap.data();
-            setFormData((prevData) => ({
-              ...prevData,
-              Name: userData.Name || 'N/A',
-              Email: userData.Email || 'N/A',
-              Phone: userData.Phone || 'N/A',
-              BloodGroup: userData.BloodGroup || 'N/A',
-              Location: userData.Location || 'N/A',
-              DateOfBirth: userData.DateOfBirth || null,
-              Gender: userData.Gender || 'N/A',
-              DonorType: userData.DonorType || 'N/A'
-            }));
-            setSelectedDate(userData.DateOfBirth || null);
-            setIsLoading(false);
-          }
-        
-      } catch (error) {
-        console.error('Error fetching user data:', error);
+  const fetchUserData = async () => {
+    try {
+      setIsLoading(true);
+      const user = getAuth(app).currentUser;
+      if (user) {
+        const userRef = doc(db, 'User_Info', user.email);
+        const docSnap = await getDoc(userRef);
+        const userData = docSnap.data();
+        setUserData(userData);
+        setFormData({
+          Name: userData.Name || 'N/A',
+          Email: userData.Email || 'N/A',
+          Phone: userData.Phone || 'N/A',
+          BloodGroup: userData.BloodGroup || 'N/A',
+          Location: userData.Location || 'N/A',
+          DateOfBirth: userData.DateOfBirth || null,
+          Gender: userData.Gender || 'N/A',
+          DonorType: userData.DonorType || 'N/A'
+        });
+        setSelectedDate(userData.DateOfBirth || null);
+        setIsLoading(false);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchUserData();
-  }, [auth, db]);
+  }, [db]);
 
   return (
     <div>
@@ -204,22 +235,25 @@ const Profile = () => {
 
  
         <div style={{ width: '30%', marginRight: '20px' }}>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageChange}
-        style={{ display: 'none' }}
-        id="profilePicInput"
-      />
-      <label htmlFor="profilePicInput" style={{ cursor: 'pointer' }}>
-        Choose Image
-      </label>
-      {image && (
-        <div style={{ marginTop: '10px' }}>
-          <img src={image} alt="Profile" style={{ maxWidth: '100%', height: 'auto' }} />
-        </div>
-      )}
-    </div>
+  <label htmlFor="profilePicInput" style={styles.uploadLabel}>
+    Choose Image
+  </label>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleImageChange}
+    style={{ display: 'none' }}
+    id="profilePicInput"
+  />
+  <div style={styles.imageContainer}>
+    <img
+      src={image || userData.ProfileImage || 'URL_TO_YOUR_DEFAULT_IMAGE'}
+      alt="Profile"
+      style={styles.profileImage}
+    />
+  </div>
+</div>
+
 
 
 
